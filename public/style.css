@@ -1,0 +1,54 @@
+nav{
+    background-color: rgb(60, 57, 65);
+    color: rgb(230, 212, 212);
+    padding: 30px 60px;
+    display: flex;
+    justify-content: space-between;
+}
+nav ul{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+nav li{
+    list-style: none;
+
+}
+nav p{
+    color:white;
+    display: flex;
+    justify-content: space-around;
+    font-weight: bold;
+    vertical-align: center;
+    padding: 5px 8px;
+}
+nav li a{
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 8px;
+}
+nav li a:hover{
+    text-decoration: none;
+    color:rgb(223, 171, 171);
+}
+
+.navbar-nav me-auto mb-2 mb-lg-0 li{
+    justify-content: space-between;
+
+}
+
+.navbar-navbar-expand-lg-navbar-light-bg-light{
+    background-color: #b8bcbe;
+}
+
+
+.checkboxlabel{
+    align-content:space-around;
+    
+}
+.centerhh{
+    width: 150px;
+      margin: 40px auto;
+      
+    }

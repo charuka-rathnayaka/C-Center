@@ -1,0 +1,89 @@
+
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top" id="mainNav">
+            <div class="container">
+               <!-- <a class="navbar-brand js-scroll-trigger" href="#page-top"><img src="assets/img/navbar-logo.svg" alt="" /></a>-->
+               <a class="nav-link js-scroll-trigger" href="#services"><div class="masthead-subheading"><h3>C Center</h3></div></a>
+                <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu
+                    <i class="fas fa-bars ml-1"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav text-uppercase ml-auto">
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/">Home</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#portfolio">Trending</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Divisions
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                              <li><a class="dropdown-item" href="#">Electronics</a></li>
+                              
+                              <li><a class="dropdown-item" href="#">Toys</a></li>
+                              
+                            
+                            </ul>
+                          </li>
+                        {{#ifeq usertype "customer"}}
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/customer/get_profile">My Profile</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/mycart">My Cart</a></li>
+                        {{/ifeq}}
+
+                        {{#ifeq usertype "Warehouse officer"}}
+                          <li class="nav-item">
+                            <a class="nav-link js-scroll-trigger" href="/warehouse_officer/add_new_item" >Add new Item</a>
+                          </li>
+
+                          <li class="nav-item">
+                            <a class="nav-link js-scroll-trigger" href="/warehouse_officer/update_item_count">Update Item</a>
+                          </li>
+                          
+                          {{/ifeq}}
+
+                         {{#ifeq usertype "admin"}}
+                          <li class="nav-item">
+                            <a  class="nav-link js-scroll-trigger" href="/admin/add_employee">Add Employee</a>
+                          </li>
+                          
+                          {{/ifeq}}
+
+                          {{#ifeq usertype "Sales manager"}}
+                          <li class="nav-item">
+                            <a class="nav-link js-scroll-trigger" href="/sales_manager/add_new_product">Add new Product</a>
+                          </li>
+                          
+                          {{/ifeq}}
+
+                          
+
+
+
+
+
+                        <li class="nav-item dropdown">
+                          {{#if user}}
+                            <a class="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fas fa-user"></i>
+                              {{{user}}}
+                            </a>
+                            {{else}}
+                            <a class="nav-link dropdown-toggle waves-effect waves-light" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              <i class="fas fa-user"></i>
+                              Guest
+                            </a> {{/if}}
+                            <div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink">
+                              {{#if user}}
+                                <a class="dropdown-item waves-effect waves-light" href="/auth/logout">Logout</a>
+                             {{else}}
+                              <a class="dropdown-item waves-effect waves-light" href="/login">Login</a>
+                              <a class="dropdown-item waves-effect waves-light" href="/customer/register">Register</a>
+                             {{/if}}
+                            </div>
+                          </li>
+
+                        
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
