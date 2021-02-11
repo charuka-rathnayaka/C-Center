@@ -102,7 +102,7 @@ exports.get_home_details=async (req,res)=>{
            // console.log("lengtth",trend_products);
                     
     }
-   
+    res.locals.activepage="home";
     res.render('index');
 
     

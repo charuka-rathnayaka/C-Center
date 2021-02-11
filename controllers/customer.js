@@ -37,6 +37,7 @@ exports.get_profile=(req,res)=>{
                     let bdate = date.slice(1,11);
                     let user_profile={lastname:customer_profile.result[0].lastName,firstname:customer_profile.result[0].firstName, email:customer_profile.result[0].email, address:customer_profile.result[0].address, city:customer_profile.result[0].city,birthday:bdate, contactnumber:customer_profile.result[0].contactNumber};
                     res.locals.user_profile=user_profile;
+                    res.locals.activepage="profile";
                     res.render('myprofile');
                     return;
                 }
