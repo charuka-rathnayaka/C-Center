@@ -20,7 +20,7 @@
            </div>
         
             <div class="card-body">
-               <form class="row g-3 needs-validation" action="/customer/auth/register" method="POST" novalidate>
+               <form class="row g-3 needs-validation" action="/customer/auth/register"  method="POST">
                 <div class="col-md-5">
                     <label for="validationCustom01" class="form-label">First name</label>
                     <input type="text" class="form-control" id="validationCustom01" name='firstname'  required value={{details.firstname}}>
@@ -48,9 +48,9 @@
                     <div class="invalid-feedback">
                         Please enter a valid email.
                     </div>
-                     {{#if email_error}}
-            <div class="alert alert-danger mt-4">{{email_error}}</div>
-                        {{/if}}
+                    {{#if email_error}}
+                            <div class="alert alert-danger mt-4">{{email_error}}</div>
+                    {{/if}}
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -64,8 +64,8 @@
                     <label for="validationCustom04" class="form-label">Main City</label>
                     <select class="form-select" id="validationCustom04" name='city' required value={{details.city}}>
                     <option selected disabled value="">Choose...</option>
-                     {{#each cities}}
-                    <option value=this.cityCode>{{this.cityName}}</option>
+                    {{#each cities}}
+                        <option value=this.cityCode>{{this.cityName}}</option>
                     {{/each}}
                     
                     </select>
@@ -103,14 +103,14 @@
                     <div class="invalid-feedback">
                         Please confirm the above password.
                     </div>
-                     {{#if password_error}}
-            <div class="alert alert-danger mt-4">{{password_error}}</div>
-                        {{/if}}
+                    {{#if password_error}}
+                        <div class="alert alert-danger mt-4">{{password_error}}</div>
+                    {{/if}}
                     </div>
                 </div>
                 
                 <div class="col-12">
-                    <button class="btn btn-primary" type="submit"> Register </button>
+                    <button class="btn btn-primary" type="submit" > Register </button>
                 </div>
                 </form>
             </div>
