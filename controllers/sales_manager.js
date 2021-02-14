@@ -163,3 +163,17 @@ exports.get_most_saled_products=async (req,res)=>{
      res.status(200).send(most_saled_products.result);
   }
 }
+
+exports.get_most_saled_categories=async (req,res)=>{
+  const most_saled_categories = await salesmanager.get_most_saled_categories();
+  
+  if(most_saled_categories.connectionError==true){
+      console.log("connection error");
+      res.render('error',{code:"500",message:"Server is temporary down"});
+      return;
+  }
+  else {
+    res.locals.top_categories=most_saled_categories.result;
+     res.status(200).render('report/trending_category_report');
+  }
+}
