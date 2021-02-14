@@ -146,3 +146,20 @@ const storage = multer.diskStorage({
        res.status(200).send(anuual_quaretly_details.result);
     }
 }
+
+
+exports.get_most_saled_products=async (req,res)=>{
+  var startdate= req.body.startdate;
+  var enddate= req.body.enddate;
+  
+  const most_saled_products = await salesmanager.get_most_saled_products(startdate,enddate);
+  
+  if(most_saled_products.connectionError==true){
+      console.log("connection error");
+      res.render('error',{code:"500",message:"Server is temporary down"});
+      return;
+  }
+  else {
+     res.status(200).send(most_saled_products.result);
+  }
+}

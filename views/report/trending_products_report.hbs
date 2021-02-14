@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 
-    
+     <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script> 
      <link rel="stylesheet" href='/css/othernavstyles.css'>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
     <link rel="stylesheet" href='/css/footerstyles.css'>
@@ -16,11 +16,85 @@
   
    {{> navigation }}
     <div class="container mt-4">
-        <div class="jumbotron">
-            <h1 class="display-4">Trending Products Sales</h1>
-           
-        </div>
+        <form  method="POST">
+            <div class="mb-3">
+                <div class="form-group">
+                    <div class="row">
+                         <div class="col-1"></div>
+                        <div class="col-4">
+                                <label for="validationCustom05" class="form-label">Start Date</label>
+                        </div>
+                        <div class="col-4">
+                            <label for="validationCustom05" class="form-label">End Date</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-1"></div>
+                        <div class="col-4">
+                            <input type="date" class="form-control" id="start_date" name='recruitment_day1' required >
+                        </div>
+                        <div class="col-4">
+                            <input type="date" class="form-control" id="end_date" name='recruitment_day2' required >
+
+                        </div>
+                        
+                            <div class="col-3">
+                                
+                            <button type="submit" class="btn btn-primary btn" formaction="" id="get_report">Get Report</button>
+                            </div>
+                    </div>
+                    
+                     <div class="row">
+                          <div class="col-1"></div>
+                        <div class="col-4">
+                            <span  id='startdate_message_id' style="color: red;"></span>
+                        </div>
+                    <div class="col-4">
+                        <span  id='enddate_message_id' style="color: red;">
+                        
+                        </span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            </form>
     </div>
+
+
+
+
+
+     <br><br><br>
+
+        <div class="container" style="border:1px solid #7c4747">
+             <div class="row justify-content-md-center" style="font-size:30px" id="quarter_heading">Products With Most Sales</div>
+             <br>
+    <table class="table table-hover" id='product_sales'>
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Product Sales Rank</th>
+            <th scope="col">Product ID</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Sold Quantity</th>
+            <th scope="col">Total Product Sale</th>
+           
+           
+            
+          </tr>
+        </thead>
+        <tbody id='product_sales'></tbody>
+        </table>
+        <br><br>
+            <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-6">
+                        <span  id='product_sales_table_id' style="color: red;"></span>
+                        </div></div>
+        </div><br><br>
+
+
+
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- Third party plugin JS-->
@@ -31,6 +105,83 @@
         <!-- Core theme JS-->
         <script src="/js/scripts.js"></script>
 
+
+    <script>
+        
+            $('#get_report').click(function(e){  
+                e.preventDefault();
+                //console.log("button clicked");
+                $("#product_sales tbody").empty();
+                $("#quarter_table_id").empty();
+                $("#startdate_message_id").empty();
+                 $("#enddate_message_id").empty();
+                $("#product_sales_table_id").empty();
+                var startdate = $("#start_date").val();
+                var enddate = $("#end_date").val();
+               
+                var start_date=new Date(startdate);
+                var end_date=new Date(enddate);
+                
+                if(startdate.length!=10){
+                    $('#startdate_message_id').html("Select Valid Start Date");
+                }
+                else if(enddate.length!=10){
+                    $('#enddate_message_id').html("Select Valid End Date");
+                }
+                else if(start_date>=end_date){
+                    $('#startdate_message_id').html("Select a Valid Time Period");
+                }
+                else{
+                
+                  $.ajax({ 
+                    url: '/sales_manager/report/most_sale_products',
+                    type: 'POST',
+                    cache: false, 
+                    data: {
+                        'startdate': startdate,
+                        'enddate': enddate,
+                    }, 
+                    success: function(data){
+                       
+                     
+                        if(data.length>0){
+                            var tot_num_products=0;
+                            var tot_sales=0;
+                            for(var i =0;i<data.length;i++){
+                                tot_num_products+=parseFloat(data[i]["productQuantity"]);
+                                tot_sales+=parseFloat(data[i]["productSale"]);
+                               
+                                var newRowContent="<tr>";
+                                newRowContent+="<td style='color:rgb(100, 38, 38);text-align:center'>"+i+"</td>";
+                                newRowContent+="<td>"+data[i]["productId"]+"</td>";
+                                newRowContent+="<td>" +data[i]["productName"] + "</td>";
+                                newRowContent+='<td>'+data[i]["productQuantity"] +'</td>';
+                                newRowContent+='<td>'+data[i]["productSale"]+'</td>';
+                                newRowContent+="</tr>";
+
+                                 jQuery("#product_sales tbody").append(newRowContent);
+                            }
+                            var newRowContent="<tr class='table-warning' style='font-size:20px;outline: thin solid'>";
+                            newRowContent+="<td colspan='3' style='text-align:left'>"+"Total"+"</td>";
+                            
+                            newRowContent+='<td>'+tot_num_products +'</td>';
+                            newRowContent+='<td>'+tot_sales+'</td>';
+                            newRowContent+="</tr>"
+               
+                            jQuery("#product_sales tbody").append(newRowContent);
+                        }
+                        else{
+                            $('#product_sales_table_id').html("No Sales results for the Selected Time Period.");
+                        }
+
+                    }
+                  })
+                }
+
+            });
+
+
+    </script>
         
   <br><br><br><br>
     {{>footer}}
