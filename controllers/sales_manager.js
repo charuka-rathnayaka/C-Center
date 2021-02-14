@@ -132,3 +132,17 @@ const storage = multer.diskStorage({
       cb('Error: Images Only!');
     }
   }
+
+
+  exports.get_annual_quaretly_sales=async (req,res)=>{
+    var year = req.params.year;
+    const anuual_quaretly_details = await salesmanager.get_annual_sales(year);
+    if(anuual_quaretly_details.connectionError==true){
+        console.log("connection error");
+        res.render('error',{code:"500",message:"Server is temporary down"});
+        return;
+    }
+    else {
+       res.status(200).send(anuual_quaretly_details.result);
+    }
+}
