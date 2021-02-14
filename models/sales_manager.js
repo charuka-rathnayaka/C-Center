@@ -192,6 +192,24 @@ class SalesManager{
             resolve(obj);
           });
         }
+
+
+        async get_most_saled_products(startdate,enddate) {
+          var result = await _database
+            .get(this)
+            .select_query(
+              "SELECT `product`.`productId`, `product`.`productName`,COUNT(`item`.`itemId`) as productQuantity,SUM(`itemdetail`.`value`) as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 AND (DATE(`cartaddition`.`dateOfAddition`) BETWEEN ? AND ?) GROUP BY `product`.`productId` ORDER BY productQuantity desc LIMIT 10",
+              [startdate,enddate]
+            );
+         
+          return new Promise((resolve) => {
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            };
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            resolve(obj);
+          });
+        }
     
 
 

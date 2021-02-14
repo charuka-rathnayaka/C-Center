@@ -31,6 +31,11 @@ router.post('/report/annual_sales_report/:year'
     salesmanagerController.get_annual_quaretly_sales
     );
 
+router.post('/report/most_sale_products'
+    ,authorization.isSalesManagerRole,
+    salesmanagerController.get_most_saled_products
+    );
+
 
 
 module.exports=router;
