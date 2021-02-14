@@ -21,10 +21,10 @@ router.get('/report/customer_order_report',authorization.isSalesManagerRole,(req
 router.get('/report/trending_product_report',authorization.isSalesManagerRole,(req,res)=>{
     res.render('report/trending_products_report');
 });
-router.get('/report/trending_category_report',authorization.isSalesManagerRole,(req,res)=>{
+/*router.get('/report/trending_category_report',authorization.isSalesManagerRole,(req,res)=>{
     res.render('report/trending_category_report');
 });
-
+*/
 
 router.post('/report/annual_sales_report/:year'
     ,authorization.isSalesManagerRole,
@@ -34,6 +34,11 @@ router.post('/report/annual_sales_report/:year'
 router.post('/report/most_sale_products'
     ,authorization.isSalesManagerRole,
     salesmanagerController.get_most_saled_products
+    );
+
+router.get('/report/trending_category_report'
+    ,authorization.isSalesManagerRole,
+    salesmanagerController.get_most_saled_categories
     );
 
 
