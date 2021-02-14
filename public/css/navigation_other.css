@@ -33,6 +33,7 @@ nav{
     border-top-left-radius: 0.25rem;
     border-top-right-radius: 0.25rem;
   }
+ 
 
   .navbar {
     position: relative;
@@ -227,4 +228,22 @@ nav{
     background-color: rgb(70, 68, 67);
     color: rgb(87, 83, 80);
   }
+
+
+  .nav-pills .nav-link.active,
+  .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #fed136;
+  }
+
+  .navbar-dark .navbar-nav .nav-link.active {
+    color: rgb(245, 230, 21);
+  }
+
+  #mainNav .navbar-nav .nav-item .nav-link.active, #mainNav .navbar-nav .nav-item .nav-link:hover {
+    color: #fed136;
+  }
   
+  .nav-link.active{
+    color: #fed136;
+  }
