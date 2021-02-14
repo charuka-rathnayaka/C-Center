@@ -26,5 +26,11 @@ router.get('/report/trending_category_report',authorization.isSalesManagerRole,(
 });
 
 
+router.post('/report/annual_sales_report/:year'
+    ,authorization.isSalesManagerRole,
+    salesmanagerController.get_annual_quaretly_sales
+    );
+
+
 
 module.exports=router;
