@@ -191,3 +191,18 @@ exports.get_most_prefer_period=async (req,res)=>{
     res.status(200).send(most_prefer_period_product.result);
   }
 }
+
+
+exports.get_customer_order_report=async (req,res)=>{
+  var email= req.body.customer_email;
+  const customer_order = await salesmanager.get_customer_order(email);
+  
+  if(customer_order.connectionError==true){
+      console.log("connection error");
+      res.render('error',{code:"500",message:"Server is temporary down"});
+      return;
+  }
+  else {
+    res.status(200).send(customer_order.result);
+  }
+}
