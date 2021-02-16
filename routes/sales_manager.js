@@ -46,4 +46,14 @@ router.post('/report/most_prefer_period'
     salesmanagerController.get_most_prefer_period
     );
 
+
+router.post('/report/customer_order_details'
+    ,authorization.isSalesManagerRole,
+    salesmanagerController.get_customer_order_report
+    );
+
+
+
+
+    
 module.exports=router;
