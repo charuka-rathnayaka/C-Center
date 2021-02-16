@@ -16,10 +16,80 @@
   
    {{> navigation }}
     <div class="container mt-4">
-        <div class="jumbotron">
-            <h1 class="display-4">Product preference Period</h1>
-           
-        </div>
+
+
+        <form  method="POST">
+            <div class="mb-3">
+                <div class="form-group">
+                   
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-6">
+                            <input class="form-control" id="product_id" placeholder="Enter the Product ID" name='productId'>
+                           
+
+                        </div>
+                        
+                            <div class="col-3">
+                                
+                            <button type="submit" class="btn btn-primary btn" formaction="" id="get_report">Get Report</button>
+                            </div>
+                    </div>
+                    
+                     <div class="row">
+                        <div class="col-3"></div>
+                    <div class="col-6">
+                        <span  id='productid_message_id' style="color: red;">
+                        
+                        </span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            </form>
+            <br><br>
+
+            <div class="card border-dark mb-3">
+                <div class="card-header" style="background-color:#bbb">
+                    <div class="row">
+                       <div class="col-4" id="productid_head" style="font-size:20px">
+                           Product ID
+                       </div> 
+                       <div class="col-4" id="productname_head" style="font-size:20px">
+                            Product Name
+                       </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <blockquote class="blockquote mb-0">
+                    <table class="table table-hover" id='product_period_sales'>
+                        <thead class="table-warning">
+                        <tr>
+                            <th scope="col" style="font-size:16px">Preference Rank</th>
+                            <th scope="col" style="font-size:16px">Preference Year</th>
+                            <th scope="col" style="font-size:16px">Preference Month</th>
+                            <th scope="col" style="font-size:16px">Sold Quantity</th>
+                            <th scope="col" style="font-size:16px">Product Sale</th>
+                        
+                        
+                            
+                        </tr>
+                        </thead>
+                        <tbody id='product_period_sale'></tbody>
+                    </table>
+                    <br><br>
+                     <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-6">
+                        <span  id='product_period_table_id' style="color: red;"></span>
+                        </div></div>
+                        </div>
+                    </blockquote>
+                </div>
+            </div>
+            
+
     </div>
      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -31,7 +101,74 @@
         <!-- Core theme JS-->
         <script src="/js/scripts.js"></script>
 
-        
+        <script>
+
+
+             $('#get_report').click(function(e){  
+                e.preventDefault();
+               $("#product_period_sales tbody").empty();
+                $('#productid_head').text('Product ID - ');
+                $('#productname_head').text('Product ID - ');
+                 $("#product_period_table_id").empty();
+                  $("#productid_message_id").empty();
+                var productID = $("#product_id").val();
+                if(productID.length==0){
+                     $('#productid_message_id').html("Please Select a Product Id");
+                }
+                else if(isNaN(productID)){
+                    $('#productid_message_id').html("Product ID should be a number");
+                }
+                else{
+
+                
+                $.ajax({ 
+                    url: '/sales_manager/report/most_prefer_period',
+                    type: 'POST',
+                    cache: false, 
+                    data: {
+                        'product_id': productID,
+                        
+                    }, 
+                    success: function(data){
+                        if(data.length>0){
+                            var product_id=data[0]["productId"];
+                            var product_name=data[0]["productName"];
+                           // console.log(data[0]["monthYear"]);
+                           
+                          
+                            const monthNames = ["January", "February", "March", "April", "May", "June",
+                                                "July", "August", "September", "October", "November", "December"
+                                                ];
+                           
+                           
+                            $('#productid_head').text('Product ID - '+product_id);
+                            $('#productname_head').text('Product ID - '+product_name);
+                            for(var i =0;i<data.length;i++){
+                                 var month=((data[0]["monthYear"]).substring(0,2));
+                                var month_name=monthNames[parseInt(month)-1];
+                               var rank=i+1;
+                                var newRowContent="<tr>";
+                                newRowContent+="<td style='color:rgb(100, 38, 38);text-align:center'>"+rank+"</td>";
+                                newRowContent+="<td>"+(data[i]["monthYear"]).substring(3)+"</td>";
+                                newRowContent+="<td>" +month_name + "</td>";
+                                newRowContent+='<td>'+data[i]["saleQuantity"] +'</td>';
+                                newRowContent+='<td>'+data[i]["productSale"]+'</td>';
+                                newRowContent+="</tr>";
+
+                                 jQuery("#product_period_sales tbody").append(newRowContent);
+                            }
+                            
+                        }
+                        else{
+                                $('#product_period_table_id').html("No Results for the Selected Product ID.");
+                        }
+                    }
+                })
+                }
+             });
+
+
+        </script>
   <br><br><br><br>
     {{>footer}}
 </body>

@@ -228,6 +228,24 @@ class SalesManager{
           });
         }
 
+        async get_most_prefer_period(product_id) {
+          var result = await _database
+            .get(this)
+            .select_query(
+              "SELECT `product`.`productId`,`product`.`productName`,SUM(`itemdetail`.`value`) as productSale,count(`item`.`itemId`) as saleQuantity,DATE_FORMAT(`cartaddition`.`dateOfAddition`, '%m-%Y') as monthYear FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 AND `product`.`productId`=? GROUP by `product`.`productId`,Month(`cartaddition`.`dateOfAddition`), Year(`cartaddition`.`dateOfAddition`) ORDER BY `saleQuantity` DESC LIMIT 5",
+              [product_id]
+            );
+         
+          return new Promise((resolve) => {
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            };
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            resolve(obj);
+          });
+        }
+
+
 
 
 
