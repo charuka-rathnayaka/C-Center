@@ -41,6 +41,19 @@ router.get('/report/trending_category_report'
     salesmanagerController.get_most_saled_categories
     );
 
+router.post('/report/most_prefer_period'
+    ,authorization.isSalesManagerRole,
+    salesmanagerController.get_most_prefer_period
+    );
 
 
+router.post('/report/customer_order_details'
+    ,authorization.isSalesManagerRole,
+    salesmanagerController.get_customer_order_report
+    );
+
+
+
+
+    
 module.exports=router;
