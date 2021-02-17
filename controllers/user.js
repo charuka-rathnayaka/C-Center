@@ -12,9 +12,9 @@ exports.login=async (req,res)=>{
         const password=req.body.password;
         const user_login = await user.login(req.body.email);
         if(!email || !password){
-            return res.status(400).render('login',{
-                message:"Please provide and email and password"
-            });
+            req.flash("error", "Please provide email and password");
+            res.redirect("/login");
+            return;
         } 
         if(user_login.error==true){
             console.log("connection error");
@@ -22,15 +22,16 @@ exports.login=async (req,res)=>{
             return;
         }
         else if(user_login.result.length==0){
-            res.status(401).render('login',{
-                message:"No such registered email"
-            })
+            req.flash("error", "No Such Email is Registered");
+            res.redirect("/login");
+            return;
         }
         else if(!(await bcrypt.compare(password,user_login.result[0]["password"]))){
-       
-            res.status(401).render('login',{
-                message:"Email or password Incorrect"
-            })
+            //res.redirect('/login?error=' + encodeURIComponent('Incorrect_Credential'));
+            req.flash("error", "Email or Password is Incorrect");
+            res.redirect("/login");
+            return;
+            
         }
         else{
             const token=jwt.sign({email:email,usertype:user_login.result[0]["role"]},process.env.JWT_SECRET,{
