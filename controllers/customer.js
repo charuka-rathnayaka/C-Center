@@ -67,16 +67,16 @@ exports.register= async (req,res)=>{
     }
     if(user_register_check.result.length>0){
         console.log('email already in use');
-        res.locals.details=req.body;
-        res.locals.email_error='email already in use';
-        res.render('register');
+       // res.locals.details=req.body;
+        //res.locals.message='email already in use';
+        req.flash("error", "Email Already in use. Please use another email");
+        res.redirect("/customer/register")
         return;
 
     }
     else if(password1!=password2){
-        res.locals.details=req.body;
-        res.locals.password_error='Passwords need to be the same';
-        res.render('register');
+        req.flash("error", "Password and the confirmation need to be same.");
+        res.redirect("/customer/register")
         return;
     }
     else{
@@ -114,8 +114,8 @@ exports.get_cities=async (req,res)=>{
         return;
     }
     else {
-       res.locals.cities=(city_details.result);       
-        res.render('register');
+      // res.locals.cities=(city_details.result);       
+        res.render('register',{cities:city_details.result});
     }
 }
 

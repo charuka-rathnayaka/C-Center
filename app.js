@@ -38,6 +38,18 @@ hbs.registerHelper('ifeq', function (a, b, options) {
 });
 
 
+const flash = require('connect-flash');
+var session = require('express-session');
+app.use(session({secret: '{secret}', name: 'session_id', saveUninitialized: true, resave: true}));
+app.use(flash());
+
+// Add errors on locals.
+app.use(function (req, res, next) {
+  res.locals.errors = req.flash("error");
+  next();
+});
+
+
 //Dividing routing according to the user
 app.use('*',checkuser);
 app.use('/',require("./routes/user"));

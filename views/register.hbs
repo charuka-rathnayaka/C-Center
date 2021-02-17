@@ -1,160 +1,259 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-
-     <link rel="stylesheet" href='/css/othernavstyles.css'>
-      <link rel="stylesheet" href='/css/footerstyles.css'>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
-    <title>REGISTER</title>
-</head>
-<body>
- 
-   {{> navigation }}
-    <div class="container mt-4">
-       <div class="card" >
-           <div class="card-header">
-               Register Form
-           </div>
-        
-            <div class="card-body">
-               <form class="row g-3 needs-validation" action="/customer/auth/register"  method="POST">
-                <div class="col-md-5">
-                    <label for="validationCustom01" class="form-label">First name</label>
-                    <input type="text" class="form-control" id="validationCustom01" name='firstname'  required value={{details.firstname}}>
-                    <div class="valid-feedback">
-                    Looks good!
-                    </div>
-                    <div class="invalid-feedback">
-                        Please enter your Firstname.
-                    </div>
-                </div>
-                <div class="col-md-5">
-                    <label for="validationCustom02" class="form-label">Last name</label>
-                    <input type="text" class="form-control" id="validationCustom02" name='lastname' required value={{details.lastname}} >
-                    <div class="valid-feedback">
-                    Looks good!
-                    </div>
-                    <div class="invalid-feedback">
-                        Please enter your Lastname.
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <label for="validationCustomUsername" class="form-label">Email</label>
-                    <div class="input-group has-validation">
-                    <input type="email" class="form-control" id="validationCustomUsername" name='email' required >
-                    <div class="invalid-feedback">
-                        Please enter a valid email.
-                    </div>
-                    {{#if email_error}}
-                            <div class="alert alert-danger mt-4">{{email_error}}</div>
-                    {{/if}}
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <label for="validationCustom03" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="validationCustom03" name='address' required value={{details.address}} >
-                    <div class="invalid-feedback">
-                    Please provide a valid Address.
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <label for="validationCustom04" class="form-label">Main City</label>
-                    <select class="form-select" id="validationCustom04" name='city' required value={{details.city}}>
-                    <option selected disabled value="">Choose...</option>
-                    {{#each cities}}
-                        <option value=this.cityCode>{{this.cityName}}</option>
-                    {{/each}}
-                    
-                    </select>
-                    <div class="invalid-feedback">
-                    Please select the closest city.
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <label for="validationCustom05" class="form-label">Date Of Birth</label>
-                    <input type="date" class="form-control" id="validationCustom05" name='birthday' required value={{details.birthday}}>
-                    <div class="invalid-feedback">
-                    Please provide your Date of Birth.
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <label for="validationCustom05" class="form-label">Contact number</label>
-                    <input type="tel" class="form-control" id="validationCustom05" name='contactnumber' placeholder="012-3456789" pattern="[0-9]{3}-[0-9]{7}" required value={{details.contactnumber}} >
-                    <div class="invalid-feedback">
-                    Please provide your Contact number.
-                    </div>
-                </div>
-                 <div class="col-md-7">
-                    <label for="validationCustomPassword" class="form-label">Password</label>
-                    <div class="input-group has-validation">
-                    <input type="password" class="form-control" id="validationCustomPasword" required name='password1' >
-                    <div class="invalid-feedback">
-                        Please enter a valid password.
-                    </div>
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <label for="validationCustomPassword1" class="form-label">Confirm Password</label>
-                    <div class="input-group has-validation">
-                    <input type="password" class="form-control" id="validationCustomPassword1" required name='password2' >
-                    <div class="invalid-feedback">
-                        Please confirm the above password.
-                    </div>
-                    {{#if password_error}}
-                        <div class="alert alert-danger mt-4">{{password_error}}</div>
-                    {{/if}}
-                    </div>
-                </div>
-                
-                <div class="col-12">
-                    <button class="btn btn-primary" type="submit" > Register </button>
-                </div>
-                </form>
-            </div>
-        </div>
-       
-    </div>
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script> 
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+     <link href="/css/loginstyles.css" rel="stylesheet" />
+    <title>Register!</title>
 
     
-    <script>
-    // Example starter JavaScript for disabling form submissions if there are invalid fields
-(function () {
-  'use strict'
+  </head>
+ <body>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-10 col-xl-9 mx-auto">
+        <div class="card card-signin flex-row my-5">
+          <div class="card-img-left d-none d-md-flex">
+             <!-- Background image for card set in CSS! -->
+          </div>
+          <div class="card-body">
+            <h5 class="card-title text-center">Register</h5>
+            <form class="form-signin" method="POST" onSubmit="return validate_register()">
+              
 
-  // Fetch all the forms we want to apply custom Bootstrap validation styles to
-  var forms = document.querySelectorAll('.needs-validation')
+              <div class="form-label-group">
+                <input type="text" id="firstName" class="form-control" placeholder="First Name" name='firstname' required>
+                <label for="firstName">First Name</label>
+                 <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='firstName_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
 
-  // Loop over them and prevent submission
-  Array.prototype.slice.call(forms)
-    .forEach(function (form) {
-      form.addEventListener('submit', function (event) {
-        if (!form.checkValidity()) {
-          event.preventDefault()
-          event.stopPropagation()
-        }
-
-        form.classList.add('was-validated')
-      }, false)
-    })
-})()
-</script>
+              <div class="form-label-group">
+                <input type="text" id="lastName" class="form-control" placeholder="Last Name" name='lastname' required>
+                <label for="lastName">Last Name</label>
+                 <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='lastName_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Third party plugin JS-->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-        <!-- Contact form JS-->
-        <script src="assets/mail/jqBootstrapValidation.js"></script>
-        <script src="assets/mail/contact_me.js"></script>
-        <!-- Core theme JS-->
-        <script src="/js/scripts.js"></script>
+              <div class="form-label-group">
+                <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name='email' required>
+                <label for="inputEmail">Email address</label>
+                 <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='email_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
 
+               <div class="form-label-group">
+                <input type="text" id="address" class="form-control" placeholder="Address" name='address' required>
+                <label for="address">Address</label>
+                 <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='address_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
+
+              <div class="form-label-group">
+                 <select class="form-select" id="city" name='city' required >
+                    <option selected disabled value="">City...</option>
+                    {{#each cities}}
+                        <option value={{{this.cityCode}}}>{{this.cityName}}</option>
+                    {{/each}}
+                    
+                </select>
+               
+                 <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='city_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
+              
+
+               <div class="form-label-group">
+                <input type="date" class="form-control" id="birthday" name='birthday' required >
+                <label for="birthday">BirthDay</label>
+                 <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='birthday_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
+
+              <div class="form-label-group">
+                <input type="tel" class="form-control" id="contactNumber" name='contactnumber' placeholder="012-3456789" pattern="[0-9]{3}-[0-9]{7}" required >
+                  <label for="contactNumber">Contact Number: 012-3456789</label>
+                 <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='contactNumber_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
+              
+
+              <div class="form-label-group">
+                <input type="password" id="inputPassword" class="form-control" placeholder="Password" name='password1'required>
+                <label for="inputPassword">Password</label>
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='password_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
+
+               <div class="form-label-group">
+                <input type="password" id="password2" class="form-control" placeholder="Password" name='password2'required>
+                <label for="password2">Confirm Password</label>
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col">
+                        <span  id='password2_message' style="color: red;"></span>
+                    </div>
+                 </div>
+              </div>
+
+
+
+               <div class="row justify-content-md-center">
+                    
+                    <div class="col-md-auto">
+                        <span  id='error_message' style="color: red;">{{errors}}</span>
+                    </div>
+                 </div>
+                
+                 <br>
+
+
+
+              
+              <div class="row justify-content-md-center">
+                  <div class="col-md-auto">
+                <button type="submit" class="btn btn-lg btn-primary btn-block text-uppercase" formaction="/customer/auth/register" >Register</button>
+                </div>
+              </div>
+              <br>
+              <div class="row justify-content-md-center">
+                  <div class="col-md-auto">
+                    <p class="text-whitesmoke text-center">Already have an account?</p></div>
+              <div class="col-md-auto">
+                    <a class="text-darkyellow" href="/login"><small>Sign In</small></a>
+              </div>
+              <hr class="my-4">
+               <p class="margin-t text-whitesmoke-right"><small> C-Center &copy; 2021</small> </p>
+            </form>
+            
+      
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+      
+function validate_register(){
+        //console.log("in fun");
+         $("#email_message").empty();
+          $("#password_message").empty();
+        $("#firstName_message").empty();
+        $("#lastName_message").empty();
+        $("#city_message").empty();
+        $("#address_message").empty();
+        $("#password2_message").empty();
+        $("#contactNumber_message").empty();
+        $("#birthday_message").empty();
+        console.log('emptiess')
         
-  <br><br><br><br>
-    {{>footer}}
+        
+       var email =document.getElementById("inputEmail").value;
+       var firstName =document.getElementById("firstName").value;
+       var lastName =document.getElementById("lastName").value;
+       var city =document.getElementById("city").value;
+       var address =document.getElementById("address").value;
+       
+       
+       var contactNumber =document.getElementById("contactNumber").value;
+       var password2 =document.getElementById("password2").value;
+       var password1 =document.getElementById("inputPassword").value;
+       var birthday =document.getElementById("birthday").value;
+       var is_valid=true;
+       var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+        
+       
+       if(!email.match(mailformat)){
+           is_valid=false;
+           $('#email_message').html("Invalid Email. Please Enter a valid Email");
+       }
+        if(password1.length<4){
+            is_valid=false;
+           $('#password_message').html("Invalid Password. Please Enter a valid Password");
+        }
+        if(password2.length<4){
+            is_valid=false;
+           $('#password2_message').html("Invalid Password. Please Enter a valid Password");
+        }
+        if(password1!=password2){
+            is_valid=false;
+           $('#password2_message').html("Invalid. Password and confirmation should be same");
+        }
+        if(firstName.length<3){
+            is_valid=false;
+           $('#firstName_message').html("Invalid FirstName. Firstname must contain at least 3 characters");
+
+        }
+        
+        if(city.length<1){
+            is_valid=false;
+           $('#city_message').html("Invalid Input. Please Select a City");
+        }
+        if(address.length<5){
+            is_valid=false;
+           $('#address_message').html("Invalid Input. Please enter a valid address");
+        }
+        if(birthday.length<4){
+            is_valid=false;
+           $('#birthday_message').html("Invalid Input. Please Enter Birthday in Correct Format");
+        }
+        if(contactNumber.length<11){
+            is_valid=false;
+           $('#contactNumber_message').html("Invalid Input. Please Enter Contact number in Correct Format");
+        }
+        if(lastName.length<3){
+            is_valid=false;
+           $('#lastName_message').html("Invalid LastName. Lastname must contain at least 3 characters");
+
+        }
+        if(is_valid==false){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+  </script>
+
+  
+  
 </body>
+
 </html>
