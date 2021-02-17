@@ -6,7 +6,8 @@ const authorization = require("../middleware/authorization");
 router.get('/add_new_item',authorization.isWarehouseOfficerRole,warehouse_officerController.get_attribute_details);
 router.post('/add_new_item',authorization.isWarehouseOfficerRole,warehouse_officerController.add_new_item);
 router.get('/update_item_count',authorization.isWarehouseOfficerRole,(req,res)=>{
-    res.render('update_item_count');
+    
+    res.render('update_item_count',{ message: req.flash('success') });
 });
 router.post('/update_item_count',authorization.isWarehouseOfficerRole,warehouse_officerController.update_item_count);
 
