@@ -15,16 +15,15 @@ exports.add_employee=async (req,res)=>{
     }
     if(employee_register_check.result.length>0){
         console.log('email already in use');
-        res.locals.details=req.body;
-        res.locals.email_error='email already in use';
-        res.render('add_employee');
+        req.flash("errormsg", "Error. Email already in use");
+        res.redirect("/admin/add_employee");
         return;
+       
 
     }
     else if(password1!=password2){
-        res.locals.details=req.body;
-        res.locals.password_error='Passwords need to be the same';
-        res.render('add_employee');
+        req.flash("errormsg", "Error. Password and Confirmation need to be same.");
+        res.redirect("/admin/add_employee");
         return;
     }
     else{
@@ -36,7 +35,9 @@ exports.add_employee=async (req,res)=>{
             return;
         }
         else{  
-            res.status(300).redirect("/");
+            console.log("Employee registration successfull")
+            req.flash('success', 'Employee registration is sucessfull.');
+            res.status(300).redirect("/admin/add_employee");
             return;
         }
     }   
