@@ -50,9 +50,7 @@
                     <div class="invalid-feedback">
                         Please enter a valid email.
                     </div>
-                     {{#if email_error}}
-            <div class="alert alert-danger mt-4">{{email_error}}</div>
-                        {{/if}}
+                    
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -83,7 +81,7 @@
                 </div>
                 <div class="col-md-7">
                     <label for="validationCustom05" class="form-label">Contact number</label>
-                    <input type="tel" class="form-control" id="validationCustom05" name='contactnumber' placeholder="012-3456789" pattern="[0-9]{3}-[0-9]{7}" required value={{details.contactnumber}} >
+                    <input type="tel" class="form-control" id="contact" name='contactnumber' placeholder="012-3456789" pattern="[0-9]{3}-[0-9]{7}" required  >
                     <div class="invalid-feedback">
                     Please provide employee Contact number.
                     </div>
@@ -104,12 +102,11 @@
                     <div class="invalid-feedback">
                         Please confirm the above password.
                     </div>
-                     {{#if password_error}}
-            <div class="alert alert-danger mt-4">{{password_error}}</div>
-                        {{/if}}
+                    
                     </div>
                 </div>
-                
+                  <span  id='error_message' style="color: red;">{{errormsg}}</span>
+                  <span  id='success_message' style="color: rgb(4, 163, 4);">{{success}}</span>
                 <div class="col-12">
                     <button class="btn btn-primary" type="submit"> Register </button>
                 </div>

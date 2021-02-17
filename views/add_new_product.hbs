@@ -52,7 +52,7 @@
                 <br>
                 <div class="col-md-8">
                     <label for="validationCustom04" class="form-label">Division </label>
-                    <select class="form-select" id="validationCustom04" name='division' required >
+                    <select class="form-select" id="divisionselect" name='division' required >
                     <option selected disabled value="">Choose...</option>
                     
                     
@@ -82,7 +82,11 @@
                    
                     
                 </div>
-                
+                <br>
+                 <span  id='success_message' style="color: rgb(4, 163, 4);">
+                    {{message}}
+                    </span>
+                <br>
                 
                 <div class="col-12">
                     <button class="btn btn-primary" type="submit"> Add New Product </button>
@@ -135,13 +139,13 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    select = document.getElementById('validationCustom04');
+    select = document.getElementById('divisionselect');
    var div_data={{{divisions}}};
    //var divis=JSON.stringify(div_data);
    //console.log(div_data[0].Division_name);
-   //console.log(div_data.length);
+   //console.log(div_data);
     for (var i=0;i<div_data.length;i++){
-        //console.log(div_data[i].Division_name);
+       // console.log(div_data[i].divisionName);
         var opt = document.createElement('option');
         opt.value = div_data[i].divisionId;
         opt.innerHTML = div_data[i].divisionName;
@@ -150,12 +154,12 @@
 
 
 var num_categories; 
-document.getElementById("validationCustom04").onchange = function() {
+document.getElementById("divisionselect").onchange = function() {
     num_categories=0;
     $('#checkboxlabel').empty();
     $('#checkboxlabel2').empty();
     var div = document.getElementById('checkboxlabel');
-    var e = document.getElementById("validationCustom04");
+    var e = document.getElementById("divisionselect");
     var strdivision = e.options[e.selectedIndex].text;
     //console.log(strUser);
     var div_category={{{division_category}}};

@@ -13,7 +13,7 @@ exports.get_attribute_details=async (req,res)=>{
     }
     else {
         res.locals.attributes=JSON.stringify(attribute_details.result);       
-        res.render('add_new_item');
+        res.render('add_new_item',{ message: req.flash('success') });
     }
 }
 
@@ -35,14 +35,15 @@ exports.add_new_item=async(req,res)=>{
     }
     else {
         console.log("successfully executed");
-        res.redirect("/");
+        req.flash("success", "Item Successfully Added.");
+        res.redirect("/warehouse_officer/add_new_item")
         return;   
     }    
  }
 
 
  exports.update_item_count=async(req,res)=>{
-    console.log(req.body);
+   // console.log(req.body);
     
     var item_id=req.body.item_id;
     var item_quantity=req.body.quantity;
@@ -60,8 +61,10 @@ exports.add_new_item=async(req,res)=>{
     }
     else {
         console.log("successfully executed");
-        res.redirect("/");
-        return;   
+        req.flash("success", "Item Count Successfully Updated.");
+        res.redirect("/warehouse_officer/update_item_count")
+        return;
+          
     }    
 
  }

@@ -31,7 +31,7 @@ exports.get_category_details=async (req,res)=>{
     else {
       
        res.locals.divisions=JSON.stringify(divisions.result);
-       // console.log("divisions",divisions.result);
+      // console.log("divisions",divisions.result);
        // res.locals.divisions=divisions;
         
     }
@@ -51,7 +51,7 @@ exports.get_category_details=async (req,res)=>{
       
         
     }
-    
+    res.locals.message=req.flash('success');
     res.render('add_new_product');
    
 }
@@ -91,8 +91,9 @@ var stored_image;
             }
             else {
                 console.log("successfully executed");
-                res.redirect("/");
-                return;   
+                req.flash("success", "Product Successfully Added.");
+              res.redirect("/sales_manager/add_new_product")
+              return;     
             }
       }
     }
