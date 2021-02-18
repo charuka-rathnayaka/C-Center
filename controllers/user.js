@@ -4,7 +4,7 @@ const bcrypt=require("bcryptjs");
 var multer  = require('multer');
 const User = require("../models/user");
 const user = new User();
-
+const {Cart,CustomerCart,GuestCart}= require("../models/cart");
 
 
 exports.login=async (req,res)=>{  
@@ -93,7 +93,7 @@ exports.get_home_details=async (req,res)=>{
         var j;
                     
         let trend_products={"trend_products":{}};
-        for(j=0; j<6; j++){
+        for(j=0; j<5; j++){
             if(j<=trending_products_result.result.length){
             var trendprod = "product" + j;
             var prodValue = {'ID':trending_products_result.result[j].productId,'name':trending_products_result.result[j].productName,'desc':trending_products_result.result[j].description,'image':trending_products_result.result[j].photoLink};                        
@@ -109,6 +109,124 @@ exports.get_home_details=async (req,res)=>{
     
 
 
+}
+
+exports.getCartAdditionList= async(req,res)=>{
+    //console.log(req.res.locals.useremail);
+    if(req.res.locals.useremail){
+        var cusCart= new CustomerCart();
+        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.useremail);
+        setData(carAdditiontList,cusCart);
+    }
+    else{
+        var gstCart= new GuestCart();
+        //console.log(req.res.locals.guest_num);
+        const carAdditiontList= await gstCart.getCartAdditions(req.res.locals.guest_num);
+        setData(carAdditiontList,gstCart);
+    }
+    async function setData(carAdditiontList,cusCart){
+        if(carAdditiontList.connectionError==true){
+            console.log("connection error list");
+            res.render('error',{code:"500",message:"Server is temporary down"});
+            return;
+        }
+        else{
+            //console.log(carAdditiontList);
+            var itemList= carAdditiontList.result;
+            var x=0;
+            var subtotal=0;
+            var arr=[];
+            var totalcount=0;
+            while(x<itemList.length){    
+                const propList= await cusCart.getItemDetail(itemList[x].itemId);
+                if(propList.connectionError==true){
+                    console.log("connection error list");
+                    res.render('error',{code:"500",message:"Server is temporary down"});
+                    return;
+                }
+                else{
+                    var prop=propList.result;
+                    var count= itemList[x].count;
+                    var cartId=itemList[x].cartId;
+                    totalcount+=count;
+                    var photoLink= itemList[x].photoLink;
+                    var productName= itemList[x].productName;
+                    itemId= propList.result[0].itemId;
+                    var price;
+                    var attribute=[];
+                    var value=[];
+                    var y=0;
+                    var prop= propList.result;
+                    while(y<prop.length){
+                        if(prop[y].attributeName=='Price'){
+                            price=prop[y].value;
+                            subtotal+=parseInt(price)*count;
+                        }
+                        else{
+                            attribute.push(prop[y].attributeName);
+                            value.push(prop[y].value);
+                        }
+                        y++;
+                    }
+                    var obj={itemId:itemId,price:price,attribute:attribute,value:value,count:count,photoLink:photoLink,productName:productName,cartId:cartId};
+                    arr.push(obj);
+                }
+                x++;
+            }
+            res.render('mycart',{data:arr,subtotal:subtotal,totalcount:totalcount});
+        }
+    }
+}
+
+exports.RemoveItem= async(itemId,cartId)=>{
+    var cart= new Cart();
+    const removeItem=await cart.RemoveCartItem(itemId,cartId);
+    if(removeItem.connectionError==true){
+        console.log("connection error");
+        res.render('error',{code:"500",message:"Server is temporary down"});
+        return;
+    }
+    else {
+       console.log("deleted");
+    }
+}
+
+exports.changeQuntity= async(itemId,cartId,value)=>{
+    var cart= new Cart();
+    const itemcount= await cart.getItemCount(itemId,cartId);
+    if(itemcount.connectionError==true){
+        console.log("connection error");
+        res.render('error',{code:"500",message:"Server is temporary down"});
+        return;
+    }
+    else {
+       var val= itemcount.result[0].count;
+       //console.log(value);
+       //console.log(val);
+       if(value>val){
+           const additem= await cart.addCartItem(itemId,cartId);
+           if(additem.connectionError==true){
+            console.log("connection error");
+            res.render('error',{code:"500",message:"Server is temporary down"});
+            return;
+            }
+            else {
+                console.log("inserted");
+            }
+       }
+       else{
+           const deleteitem =await cart.RemoveCartItem(itemId,cartId);
+           if(deleteitem.connectionError==true){
+            console.log("connection error");
+            res.render('error',{code:"500",message:"Server is temporary down"});
+            return;
+            }
+            else {
+                console.log("deleted");
+                return;
+            }
+       }
+    }
 }
 
 
