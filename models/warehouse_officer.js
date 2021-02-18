@@ -118,6 +118,71 @@ class WarehouseOfficer {
                 });
             }
 
+
+            async get_open_orders() {
+              var result = await _database
+                .get(this)
+                .select_query(
+                  "SELECT `order`.`orderId`,`cart`.`cartId`,`order`.`delieveryMethod`,`cart`.`dateOfPurchase`,`order`.`state` FROM `order` NATURAL JOIN `cart` where `order`.`state`='open';"
+                  
+                );
+             
+              return new Promise((resolve) => {
+                let obj = {
+                  connectionError: _database.get(this).connectionError,
+                };
+               // result.error ? (obj.error = true) : (obj.result = result.result);
+               if (result.error==true){
+                obj.error = true
+              }
+              else{
+                var moment = require("moment");
+                var db_result=result.result;
+                for (var i=0;i<db_result.length;i++){
+                  var purchasedate=(moment(db_result[i].dateOfPurchase).format("MMM Do YY"));
+                  db_result[i]["dateOfPurchase"]=purchasedate;
+                }
+                //console.log(db_result);
+                obj.result=db_result;
+
+              }
+                resolve(obj);
+              });
+            }
+
+
+            async get_order_details(orderId) {
+              var result = await _database
+                .get(this)
+                .select_query(
+                  "SELECT `cart`.`cartId`,`order`.`orderId`,`order`.`delieveryMethod`,`product`.`productId`, `product`.`productName`,`item`.`itemId`,`cartaddition`.`dateOfAddition`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 and `order`.`orderId`=?;",
+                  [orderId]
+                );
+             
+              return new Promise((resolve) => {
+                let obj = {
+                  connectionError: _database.get(this).connectionError,
+                };
+               // result.error ? (obj.error = true) : (obj.result = result.result);
+               if (result.error==true){
+                obj.error = true
+              }
+              else{
+                var moment = require("moment");
+                var db_result=result.result;
+                for (var i=0;i<db_result.length;i++){
+                  var purchasedate=(moment(db_result[i].dateOfAddition).format("MMM Do YY"));
+                  db_result[i]["dateOfAddition"]=purchasedate;
+                }
+                //console.log(db_result);
+                obj.result=db_result;
+
+              }
+                resolve(obj);
+              });
+            }
+
+
 }
 
 module.exports = WarehouseOfficer;

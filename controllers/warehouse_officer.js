@@ -68,3 +68,46 @@ exports.add_new_item=async(req,res)=>{
     }    
 
  }
+
+ exports.get_open_orders=async(req,res)=>{
+    const open_orders = await warehouse_officer.get_open_orders();
+    if(open_orders.connectionError==true){
+        console.log("connection error");
+        res.render('error',{code:"500",message:"Server is temporary down"});
+        return;
+    }
+    else {
+       
+       
+        res.locals.open_orders=(open_orders.result);       
+        res.status(200).render('orders');
+    }
+     
+   
+
+ }
+
+
+ exports.get_order_details=async(req,res)=>{
+    var orderId = req.params.orderId;
+   
+    const order_details = await warehouse_officer.get_order_details(orderId);
+    if(order_details.connectionError==true){
+        console.log("connection error");
+        res.render('error',{code:"500",message:"Server is temporary down"});
+        return;
+    }
+    else {
+       
+        res.locals.order_details=(order_details.result); 
+        res.locals.cartId=(order_details.result[0]["cartId"]);
+        res.locals.orderId=(order_details.result[0]["orderId"]);
+        res.locals.delievery=(order_details.result[0]["delieveryMethod"]);    
+       
+        res.status(200).render('order_details');
+    }
+
+   
+
+ }
+ 

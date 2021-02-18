@@ -61,6 +61,7 @@ const checkuser=async (req,res,next)=>{
             
                 }else{
                    // console.log(get_guest_id.result.insertId);
+                   res.locals.usertype="Guest";
                     const id=get_guest_id.result.insertId;
                     const guest_token=jwt.sign({guest_id:id,},process.env.JWT_SECRET,{
                         expiresIn:process.env.JWT_Expires_in
@@ -84,6 +85,7 @@ const checkuser=async (req,res,next)=>{
                     res.status(403).render('error',{code:"403",message:"Undefined Error Occured"});
                 }else{
                     //console.log(decodedToken);
+                    res.locals.usertype="Guest";
                     var id= decodedToken.guest_id;
                     res.locals.guest_num=id;
                     
