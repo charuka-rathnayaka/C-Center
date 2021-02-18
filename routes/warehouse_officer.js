@@ -15,5 +15,9 @@ router.post('/update_item_count',authorization.isWarehouseOfficerRole,warehouse_
 router.get('/order',authorization.isWarehouseOfficerRole,warehouse_officerController.get_open_orders);
 router.get('/order/:orderId',authorization.isWarehouseOfficerRole,warehouse_officerController.get_order_details);
 
+router.post('/get_order',authorization.isWarehouseOfficerRole,warehouse_officerController.get_order);
+
+router.get('/order_confirm/:orderId',authorization.isWarehouseOfficerRole,warehouse_officerController.confirm_order);
+
 
 module.exports=router;

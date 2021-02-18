@@ -63,8 +63,7 @@ exports.add_new_item=async(req,res)=>{
         console.log("successfully executed");
         req.flash("success", "Item Count Successfully Updated.");
         res.redirect("/warehouse_officer/update_item_count")
-        return;
-          
+        return;     
     }    
 
  }
@@ -77,14 +76,10 @@ exports.add_new_item=async(req,res)=>{
         return;
     }
     else {
-       
-       
+    
         res.locals.open_orders=(open_orders.result);       
         res.status(200).render('orders');
     }
-     
-   
-
  }
 
 
@@ -98,7 +93,7 @@ exports.add_new_item=async(req,res)=>{
         return;
     }
     else {
-       
+        res.locals.state=(order_details.result[0]["state"]); 
         res.locals.order_details=(order_details.result); 
         res.locals.cartId=(order_details.result[0]["cartId"]);
         res.locals.orderId=(order_details.result[0]["orderId"]);
@@ -106,8 +101,43 @@ exports.add_new_item=async(req,res)=>{
        
         res.status(200).render('order_details');
     }
+ }
+
+
+ exports.confirm_order=async(req,res)=>{
+    var orderId = req.params.orderId;
+   
+    const order_confirm = await warehouse_officer.confirm_order(orderId);
+    //console.log(order_confirm);
+    if(order_confirm.connectionError==true){
+        console.log("connection error");
+        res.render('error',{code:"500",message:"Server is temporary down"});
+        return;
+    }
+    else {
+        res.status(200).redirect('/warehouse_officer/order');
+    }
+
+}   
+
+
+  exports.get_order=async (req,res)=>{
+    var orderId = req.body.orderId;
+    const order = await warehouse_officer.get_order(orderId);
+    if(order.connectionError==true){
+        console.log("connection error");
+        res.render('error',{code:"500",message:"Server is temporary down"});
+        return;
+    }
+    else {
+        //console.log(order);
+       res.status(200).send(order.result);
+    }
+}
+
+    
 
    
 
- }
+
  
