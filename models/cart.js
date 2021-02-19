@@ -24,12 +24,12 @@ class Cart{
         });
       }
   
-      async RemoveCartItem(itemId,cartId){
+      async RemoveCartItem(itemId,cartId,val){
         var result= await _database
           .get(this)
           .select_query(
-            `delete from cartAddition where itemId=? and cartId=? order by dateOfAddition desc limit 1;`,
-            [itemId,cartId]
+            `delete from cartAddition where itemId=? and cartId=? order by dateOfAddition desc limit ?;`,
+            [itemId,cartId,val]
           );
         return new Promise((resolve)=>{
           let obj = {
@@ -62,6 +62,21 @@ class Cart{
           .select_query(
             `select count(itemId) as "count" from cartAddition where itemId=? and cartId=?;`,
             [itemId,cartId]
+          );
+        return new Promise((resolve)=>{
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          };
+          result.error ? (obj.error = true) : (obj.result = result.result);
+          resolve(obj);
+        });
+  }
+  async UpdateItemCount(itemId,cartId,value){
+        var result= await _database
+          .get(this)
+          .select_query(
+            `Call Update_cart_iteam(?,?,?)`,
+            [itemId,cartId,value]
           );
         return new Promise((resolve)=>{
           let obj = {

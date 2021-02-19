@@ -12,16 +12,49 @@ router.get('/login',(req,res)=>{
 });
 
 router.get('/mycart',userController.getCartAdditionList);
-router.get('/mycart/remove',jsonParser,function(req,res){
-    userController.RemoveItem(req.query.id,req.query.cartId);
-    res.redirect('/mycart');
-});
-router.post('/mycart/json',jsonParser,function(req,res){
-    userController.changeQuntity(req.body.itemId,req.body.cartId,req.body.value);
-    res.redirect('/mycart');
-});
+router.post('/mycart/remove', jsonParser, async function (req, res, next) {
+    console.log(req.body.itemId,req.body.cartId);
+    await userController.RemoveItem(req.body.itemId,req.body.cartId);
+    next();
+},userController.getCartAdditionListjson);
+router.post('/mycart/json',jsonParser, async function (req, res, next) {
+     
+    await userController.changeQuntity(req.body.itemId, req.body.cartId, req.body.value);
+    next();
+   // res.redirect('/mycart');
+},userController.getCartAdditionListjson);
 
+router.get('/order',userController.getCartAdditionList);
+router.get('/order/delieveryorder',userController.getCartAdditionList);
+router.get('/order/pickuporder', userController.getCartAdditionList);
 
+router.get('/order/delieveryorder/remove',jsonParser,async function (req, res, next) {
+    console.log(req.body.itemId,req.body.cartId);
+    await userController.RemoveItem(req.body.itemId,req.body.cartId);
+    next();
+},userController.getCartAdditionListjson);
+router.get('/order/pickuporder/remove',jsonParser,async function (req, res, next) {
+    console.log(req.body.itemId,req.body.cartId);
+    await userController.RemoveItem(req.body.itemId,req.body.cartId);
+    next();
+},userController.getCartAdditionListjson);
 
+router.post('/order',userController.gettype);
+router.post('/order/delieveryorder', userController.delieveryorder);
+router.post('/order/pickuporder', userController.pickupOrder);
+
+router.post('/order/pickuporder/json',jsonParser,async function (req, res, next) {
+     
+    await userController.changeQuntity(req.body.itemId, req.body.cartId, req.body.value);
+    next();
+   // res.redirect('/mycart');
+}, userController.getCartAdditionListjson);
+
+router.post('/order/delieveryorder/json', jsonParser, async function (req, res, next) {
+     
+    await userController.changeQuntity(req.body.itemId, req.body.cartId, req.body.value);
+    next();
+   // res.redirect('/mycart');
+},userController.getCartAdditionListjson);
 
 module.exports=router;
