@@ -12,8 +12,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
         crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-
     <link rel="stylesheet" href='/css/footerstyles.css'>
     <link rel="stylesheet" href='/css/cartstyle.css'>
     <title>My Cart</title>
@@ -22,6 +20,97 @@
 <body>
 
     {{> navigation }}
+
+
+
+
+
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                Delievery Order
+            </div>
+            <div class="card-body">
+                <form class="needs-validation" action="/order/delieveryorder" method="POST">
+                    <div class="col-md-5">
+                        <label for="validationCustom01" class="form-label">Contact name</label>
+                        <input type="text" class="form-control" id="validationCustom01" name='firstname' required
+                            value={{user_profile.contactname}}>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Please enter your Contact name.
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="validationCustom03" class="form-label">Address</label>
+                        <input type="text" class="form-control" id="validationCustom03" name='address' required
+                            value={{user_profile.address}}>
+                        <div class="invalid-feedback">
+                            Please provide a valid Address.
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="validationCustom04" class="form-label">State</label>
+                        <select class="form-select" id="validationCustom04" name='city' required
+                            value={{user_profile.city}}>
+                            <option selected disabled value="">Choose...</option>
+                            <option value='Galle'>Galle</option>
+                            <option value='Matara'>Matara</option>
+                            <option value='Colombo'>Colombo</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select the closest city.
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <label for="validationCustom05" class="form-label">Contact number</label>
+                        <input type="tel" class="form-control" id="validationCustom05" name='contactnumber'
+                            placeholder="012-3456789" pattern="[0-9]{3}-[0-9]{7}" required
+                            value={{user_profile.contactnumber}}>
+                        <div class="invalid-feedback">
+                            Please provide your Contact number.
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="validationCustom04" class="form-label">Payment Method</label>
+                        <select class="form-select" id="validationCustom04" name='payment' required
+                            value={{user_profile.payment}}>
+                            <option selected disabled value="">Choose...</option>
+                            <option value='cashondelivery'>cash on delivery </option>
+                            <option value='card'>card</option>
+
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select the Paymeny Method.
+                        </div>
+                    </div>
+                    <div class="cardcheckout">
+                        <button class="block" type="submit"> Confirm </button>
+                        <br>
+                        <div class="card">
+                            <div class="card-body">
+                                <br>
+                                <div class="total" id="totalcount">Items({{totalcount}})</div>
+                                <div class="subtotal" id="subtotal">LKR. {{subtotal}}</div>
+                            </div>
+                            <div class="card-footer text-muted">
+                                <div class="total">Subtotal</div>
+                                <div class="subtotal" id="subtotala">LKR. {{subtotal}}</div>
+                            </div>
+                        </div>
+                        <br>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+    </div>
+
     <div class="container mt-4">
         <div class="jumbotron">
             <h1 class="display-4">My Cart</h1>
@@ -57,7 +146,6 @@
                                             </div>
 
                                             <div class="cardlink">
-
                                                 <button class="btn"
                                                     onclick="remove('{{this.cartId}}','{{this.itemId}}','{{this.productName}}')">Remove</button>
                                             </div>
@@ -77,41 +165,12 @@
                     {{/each}}
                 </tbody>
             </table>
-            {{#ifeq subtotal 0}}
-            {{else}}
-            <div class="cardcheckout">
-                <div class="card">
-                    <div class="card-body">
-                        <form class="needs-validation" action="/order" method="POST">
-                            <button class="block" type="submit">Go to Checkout</button>
-                            <br>
-                            <label for="validationCustom04" class="form-label">Delivary Method</label>
-                            <select class="form-select" id="validationCustom04" name='delieveryMethod' required
-                                value={{details.delieveryMethod}} disabled="true">
-                                <option selected disabled value="">Choose...</option>
-                                <option value='Pickup'>Pickup</option>
-                                <option value='Delievery'>Delievery</option>
 
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select the Delivary method.
-                            </div>
-
-                        </form>
-
-                        <br>
-                        <div class="total" id="totalcount">Items({{totalcount}})</div>
-                        <div class="subtotal" id="subtotal">LKR. {{subtotal}}</div>
-                    </div>
-                    <div class="card-footer text-muted">
-                        <div class="total">Subtotal</div>
-                        <div class="subtotal" id="subtotala">LKR. {{subtotal}}</div>
-                    </div>
-                </div>
-            </div>
-            {{/ifeq}}
         </div>
     </div>
+
+
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -124,13 +183,11 @@
     <script src="/js/scripts.js"></script>
 
 
-
     <br><br><br><br>
     {{>footer}}
 </body>
 
 </html>
-
 <script>
     function update(value, price, cartId, itemId) {
         $.ajax({

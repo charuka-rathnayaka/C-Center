@@ -82,7 +82,28 @@ class User {
           result.error ? (obj.error = true) : (obj.result = result.result);
           resolve(obj);
         });
-      }
+  }
+  
+  async orderIteams(ContactName, contactnumber,pickupdate,payment,Cart_ID) {
+        var result = await _database
+          .get(this)
+          .select_query(
+          
+            'CALL pickup_Order_Iteam(?,?,?,?,?,?)',
+            [Cart_ID,"notDelivered",pickupdate,contactnumber,ContactName,payment]   
+          );
+      console.log(ContactName, contactnumber,pickupdate,payment);
+     return new Promise((resolve) => {
+          
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          };
+          result.error ? (obj.error = true) : (obj.result = result.result);
+         
+          resolve(obj);
+        });
+  }
+ 
 
 }
 

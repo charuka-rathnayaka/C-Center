@@ -211,7 +211,7 @@ INSERT INTO `customer` (`email`, `firstName`, `lastName`, `address`, `city`, `da
 -- Table structure for table ` customercart`
 --
 
-CREATE TABLE ` customercart` (
+CREATE TABLE `customercart` (
   `customerCartId` int(10) NOT NULL,
   `cartId` int(10) DEFAULT NULL,
   `email` varchar(30) DEFAULT NULL
@@ -657,7 +657,7 @@ ALTER TABLE `customer`
 --
 -- Indexes for table ` customercart`
 --
-ALTER TABLE ` customercart`
+ALTER TABLE `customercart`
   ADD PRIMARY KEY (`customerCartId`),
   ADD KEY `cartId` (`cartId`),
   ADD KEY `email` (`email`);
@@ -812,7 +812,7 @@ ALTER TABLE `category`
 --
 -- AUTO_INCREMENT for table ` customercart`
 --
-ALTER TABLE ` customercart`
+ALTER TABLE `customercart`
   MODIFY `customerCartId` int(10) NOT NULL AUTO_INCREMENT;
 
 --
@@ -877,7 +877,7 @@ ALTER TABLE `cartaddition`
 --
 -- Constraints for table ` customercart`
 --
-ALTER TABLE ` customercart`
+ALTER TABLE `customercart`
   ADD CONSTRAINT ` customercart_ibfk_1` FOREIGN KEY (`cartId`) REFERENCES `cart` (`cartId`),
   ADD CONSTRAINT ` customercart_ibfk_2` FOREIGN KEY (`email`) REFERENCES `customer` (`email`);
 
