@@ -669,8 +669,7 @@ exports.sentToCart = async(req,res)=>{
             else {
                 //check whether guest have a cart
                 const existance=await guest.checkCart(decodedToken.guest_id);
-                console.log("gone");
-                console.log(existance);
+                
 
                 if(existance.connectionError==true || existance.error==true){
                     console.log(error);
@@ -682,8 +681,7 @@ exports.sentToCart = async(req,res)=>{
                     //If guest doesn't have a open cart, create a cart
                     if (existance.result[0].cartid==null){
                         const creation=await guest.createCart(decodedToken.guest_id);
-                        console.log("creation");
-                        console.log(creation);
+                        
                         if(creation.connectionError==true || creation.error==true){
                             console.log(error);
                             res.render('error',{code:"500",message:"Server is down."});
@@ -700,10 +698,10 @@ exports.sentToCart = async(req,res)=>{
                                 return;
                             }else{
                                 var cartId =cartIdInfo.result[0].cartid;
-                                console.log(quantity.quantity);
+                                
                                 //add to the cartaddition table
                                 const addition = await user.addToCart(cartId,quantity.quantity,itemID);
-                                console.log(addition);
+                                
                                 if(addition.connectionError==true){
                                     console.log(error);
                                     res.render('error',{code:"500",message:"Server is down."});
@@ -717,11 +715,11 @@ exports.sentToCart = async(req,res)=>{
                     }// if guest has a opened cart
                     else{
                         
-                        console.log(existance.result[0].cartid);
+                        
                         var cartId=existance.result[0].cartid;
-                        console.log(quantity.quantity);
+                        
                         const addition = await user.addToCart(cartId,quantity.quantity,itemID);
-                        console.log(addition);
+                        
                         if(addition.connectionError==true){
                             console.log(error);
                             res.render('error',{code:"500",message:"Server is down."});
