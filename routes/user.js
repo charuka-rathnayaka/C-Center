@@ -16,7 +16,11 @@ router.get('/login',(req,res)=>{
 router.get('/mycart',(req,res)=>{
     res.render('mycart');
 });
+router.get('/info/:product_id',userController.getDetails);
 
+router.post('/cart/:itemID',userController.sentToCart);
+
+router.get('/addition/:itemID',userController.getItemDetails)
 
 
 module.exports=router;

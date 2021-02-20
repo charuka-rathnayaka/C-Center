@@ -83,6 +83,66 @@ class User {
           resolve(obj);
         });
       }
+      async showInformation(product_id){
+        var result = await _database
+          .get(this)
+          .select_query(
+          
+            'SELECT * FROM (SELECT * FROM (SELECT item.productId,item.itemId,attribute.attributeName,itemdetail.value,attribute.attributeId FROM ((item INNER JOIN itemdetail ON item.itemId = itemdetail.itemId) INNER JOIN attribute ON itemdetail.attributeId = attribute.attributeId) ) AS A NATURAL JOIN product)AS B WHERE productId=?',
+            [product_id]   
+          );
+        
+        return new Promise((resolve,reject)=>{
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            }
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            resolve(obj);
+            
+        })
+      }
+      async showItemInformation(item_id){
+        var result = await _database
+          .get(this)
+          .select_query(
+          
+            'SELECT * FROM (SELECT * FROM (SELECT item.productId,item.itemId,attribute.attributeName,itemdetail.value,attribute.attributeId FROM ((item INNER JOIN itemdetail ON item.itemId = itemdetail.itemId) INNER JOIN attribute ON itemdetail.attributeId = attribute.attributeId) ) AS A NATURAL JOIN product)AS B WHERE itemId=?',
+            [item_id]   
+          );
+        
+        return new Promise((resolve,reject)=>{
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            }
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            
+            resolve(obj);
+            
+        })
+      }
+      
+     
+      async addToCart(cartId,quantity,itemId){
+        var result = await _database
+          .get(this)
+          .select_query(
+          
+            'INSERT INTO `cartaddition`( `cartId`, `itemId`, `amount`, `dateOfAddition`) VALUES (?,?,?,(SELECT CURRENT_DATE()))',
+            [cartId,itemId,quantity]
+
+          );
+        
+        return new Promise((resolve,reject)=>{
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            }
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            
+            resolve(obj);
+            
+        })
+      }
+      
 
 }
 
