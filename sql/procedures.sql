@@ -103,6 +103,49 @@ END$$
 DELIMITER ;
 
 
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `create_cart_customer`$$
+
+CREATE PROCEDURE `create_cart_customer`(
+    
+    Email VARCHAR(30))
+BEGIN
+    START TRANSACTION;
+        
+        INSERT INTO `cart`(`state`) VALUES ("open");
+        SELECT @cartId:=MAX(cartId) FROM `cart`;
+        INSERT INTO ` customercart`(`cartId`, `email`) VALUES (@cartId,Email);
+
+    COMMIT;
+END$$
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `create_cart_guest`$$
+
+CREATE PROCEDURE `create_cart_guest`(
+    
+    Id VARCHAR(30))
+BEGIN
+    START TRANSACTION;
+        
+        INSERT INTO `cart`(`state`) VALUES ("open");
+        SELECT @cartId:=MAX(cartId) FROM `cart`;
+        INSERT INTO `guest cart` (`cartId`, `guestId`) VALUES (@cartId,Id);
+        
+    COMMIT;
+END$$
+
+DELIMITER ;
+
+
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `pickup_Order_Iteam`$$
 CREATE PROCEDURE `pickup_Order_Iteam`(
@@ -201,3 +244,4 @@ BEGIN
 END$$
 
 DELIMITER ;
+

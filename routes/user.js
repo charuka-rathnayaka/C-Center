@@ -11,6 +11,14 @@ router.get('/login',(req,res)=>{
     res.render('login');
 });
 
+
+router.get('/info/:product_id',userController.getDetails);
+
+router.post('/cart/:itemID',userController.sentToCart);
+
+router.get('/addition/:itemID',userController.getItemDetails)
+
+
 router.get('/mycart',userController.getCartAdditionList);
 router.post('/mycart/remove', jsonParser, async function (req, res, next) {
     console.log(req.body.itemId,req.body.cartId);
