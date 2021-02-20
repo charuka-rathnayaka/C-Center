@@ -150,6 +150,9 @@ class User {
       
 
   async orderIteams(ContactName, contactnumber,pickupdate,payment,Cart_ID) {
+    var result = await _database
+    .get(this)
+    .select_query(
             'CALL pickup_Order_Iteam(?,?,?,?,?,?)',
             [Cart_ID,"notDelivered",pickupdate,contactnumber,ContactName,payment]   
           );
