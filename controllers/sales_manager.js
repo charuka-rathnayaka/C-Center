@@ -31,7 +31,7 @@ exports.get_category_details=async (req,res)=>{
     else {
       
        res.locals.divisions=JSON.stringify(divisions.result);
-       // console.log("divisions",divisions.result);
+      // console.log("divisions",divisions.result);
        // res.locals.divisions=divisions;
         
     }
@@ -51,7 +51,7 @@ exports.get_category_details=async (req,res)=>{
       
         
     }
-    
+    res.locals.message=req.flash('success');
     res.render('add_new_product');
    
 }
@@ -91,8 +91,9 @@ var stored_image;
             }
             else {
                 console.log("successfully executed");
-                res.redirect("/");
-                return;   
+                req.flash("success", "Product Successfully Added.");
+              res.redirect("/sales_manager/add_new_product")
+              return;     
             }
       }
     }
@@ -132,3 +133,77 @@ const storage = multer.diskStorage({
       cb('Error: Images Only!');
     }
   }
+
+
+  exports.get_annual_quaretly_sales=async (req,res)=>{
+    var year = req.params.year;
+    const anuual_quaretly_details = await salesmanager.get_annual_sales(year);
+    if(anuual_quaretly_details.connectionError==true){
+        console.log("connection error");
+        res.render('error',{code:"500",message:"Server is temporary down"});
+        return;
+    }
+    else {
+       res.status(200).send(anuual_quaretly_details.result);
+    }
+}
+
+
+exports.get_most_saled_products=async (req,res)=>{
+  var startdate= req.body.startdate;
+  var enddate= req.body.enddate;
+  
+  const most_saled_products = await salesmanager.get_most_saled_products(startdate,enddate);
+  
+  if(most_saled_products.connectionError==true){
+      console.log("connection error");
+      res.render('error',{code:"500",message:"Server is temporary down"});
+      return;
+  }
+  else {
+     res.status(200).send(most_saled_products.result);
+  }
+}
+
+exports.get_most_saled_categories=async (req,res)=>{
+  const most_saled_categories = await salesmanager.get_most_saled_categories();
+  
+  if(most_saled_categories.connectionError==true){
+      console.log("connection error");
+      res.render('error',{code:"500",message:"Server is temporary down"});
+      return;
+  }
+  else {
+    res.locals.top_categories=most_saled_categories.result;
+     res.status(200).render('report/trending_category_report');
+  }
+}
+
+exports.get_most_prefer_period=async (req,res)=>{
+  var product_id= req.body.product_id;
+  const most_prefer_period_product = await salesmanager.get_most_prefer_period(product_id);
+  
+  if(most_prefer_period_product.connectionError==true){
+      console.log("connection error");
+      res.render('error',{code:"500",message:"Server is temporary down"});
+      return;
+  }
+  else {
+    res.status(200).send(most_prefer_period_product.result);
+  }
+}
+
+
+exports.get_customer_order_report=async (req,res)=>{
+  var email= req.body.customer_email;
+  const customer_order = await salesmanager.get_customer_order(email);
+  
+  if(customer_order.connectionError==true){
+      console.log("connection error");
+      res.render('error',{code:"500",message:"Server is temporary down"});
+      return;
+  }
+  else {
+    res.status(200).send(customer_order.result);
+  }
+}

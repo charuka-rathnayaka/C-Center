@@ -19,7 +19,6 @@ BEGIN
     START TRANSACTION;
         INSERT INTO `product`(`productName`,`description`,`photoLink`) VALUES (Product_name,Description,Photo_Link);
         INSERT INTO `productdivisiondetail`(`productId`,`divisionId`) VALUES (LAST_INSERT_ID(),"1");
-        
         REPEAT SET i = i + 1;
         INSERT INTO  `productcategorydetail`(productId,categoryId) VALUES (LAST_INSERT_ID(),TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(categories, ',', i), ',', -1)));
         UNTIL i >= num_categories
@@ -105,6 +104,7 @@ DELIMITER ;
 
 
 
+
 DELIMITER $$
 
 DROP PROCEDURE IF EXISTS `create_cart_customer`$$
@@ -140,6 +140,106 @@ BEGIN
         SELECT @cartId:=MAX(cartId) FROM `cart`;
         INSERT INTO `guest cart` (`cartId`, `guestId`) VALUES (@cartId,Id);
         
+    COMMIT;
+END$$
+
+DELIMITER ;
+
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `pickup_Order_Iteam`$$
+CREATE PROCEDURE `pickup_Order_Iteam`(
+    
+    cartId int(10),
+  state varchar(30) ,
+     pickupDate date ,
+  contactNumber varchar(11) ,
+  contactName varchar(50),
+  paymentMethod varchar(20)
+    )
+BEGIN
+    DECLARE order_id INT DEFAULT 0;
+    START TRANSACTION;
+        INSERT INTO `order`(`cartId`, `delieveryMethod`, `state`) VALUES (cartId,'pickuporder',state);
+        SET order_id = LAST_INSERT_ID();
+        INSERT INTO `pickuporder`(`orderId`, `pickupDate`, `contactNumber`, `contactName`) VALUES (order_id,pickupDate,contactNumber,contactName);
+INSERT INTO `payment`(`orderId`, `paymentMethod`) VALUES (order_id,paymentMethod);
+UPDATE `cart` SET `dateOfPurchase`=curdate() WHERE `cartId`=cartId;
+UPDATE `cart` SET `dateOfPurchase`=curdate() WHERE `cartId`=cartId;
+UPDATE item s
+JOIN (
+   select itemId as itemId , COUNT(itemId) as itemC from cartAddition where cartId=cartId group by itemId
+) vals ON s.itemId = vals.itemId
+SET itemCount =itemCount- itemC;
+    COMMIT;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS `delievery_Order_Iteam`$$
+CREATE PROCEDURE `delievery_Order_Iteam`(
+    
+    cartId int(10),
+  state varchar(30) ,
+     delieveryAddress varchar(50)	 ,
+  city	varchar(20)	 ,
+  contactNumber	varchar(11)	,
+  contactName	varchar(50)	,
+  delieveryEstimate	date,
+  paymentMethod varchar(20)
+    )
+BEGIN
+    DECLARE order_id INT DEFAULT 0;
+    DECLARE numofItem INT DEFAULT 0;
+     DECLARE i INT(8) DEFAULT 0;
+    START TRANSACTION;
+        INSERT INTO `order`(`cartId`, `delieveryMethod`, `state`) VALUES (cartId,'delieveryorder',state);
+        SET order_id = LAST_INSERT_ID();
+        INSERT INTO `delieveryorder`(`orderId`, `delieveryAddress`, `city`, `contactNumber`, `contactName`, `delieveryEstimate`) VALUES (order_id,delieveryAddress,city,contactNumber,contactName,delieveryEstimate);
+INSERT INTO `payment`(`orderId`, `paymentMethod`) VALUES (order_id,paymentMethod);
+UPDATE `cart` SET `dateOfPurchase`=curdate() WHERE `cartId`=cartId;
+UPDATE item s
+JOIN (
+   select itemId as itemId , COUNT(itemId) as itemC from cartAddition where cartId=cartId group by itemId
+) vals ON s.itemId = vals.itemId
+SET itemCount =itemCount- itemC;
+
+    COMMIT;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `Update_cart_iteam`$$
+
+CREATE PROCEDURE `Update_cart_iteam`(
+    
+    Item_ID int(15),
+	cartId int(10),
+    Value int(100)) 
+BEGIN
+    
+    DECLARE ItemQuantity INT(5) DEFAULT 0;
+     DECLARE i INT(8) DEFAULT 0;
+    START TRANSACTION;
+        
+        
+        select count(itemId) INTO ItemQuantity from cartAddition where itemId=Item_ID and cartId=cartId limit 1;
+        SET ItemQuantity=ItemQuantity-Value;
+        IF (0>ItemQuantity) THEN
+        
+            REPEAT SET i = i + 1;
+            insert into cartAddition(cartId,itemId,dateOfAddition) values(cartId,Item_ID,curdate());
+            UNTIL i >= -ItemQuantity
+        END REPEAT;
+        ELSE
+        IF (0<ItemQuantity) THEN
+            delete from cartAddition where itemId=Item_ID and cartId=cartId order by dateOfAddition desc limit ItemQuantity;
+                END IF;
+        
+       END IF;
+        
+      
     COMMIT;
 END$$
 

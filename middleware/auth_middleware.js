@@ -19,8 +19,22 @@ const checkuser=async (req,res,next)=>{
                 res.status(403).render('error',{code:"403",message:"Undefined Error Occured"});
                // res.redirect('/login');
                next();
-            }else{
+            }
+            
+            else{
                 const user_type_check = await userc.get_user(decodedToken.email);
+                //console.log(user_type_check);
+                if(user_type_check.connectionError==true){
+                    console.log("connection error");
+                    res.render('error',{code:"500",message:"Server is temporary down"});
+                    return;
+                }
+                if(user_type_check.error==true){
+                    console.log("connection error");
+                    res.render('error',{code:"500",message:"Server is temporary down"});
+                    return;
+                }
+                else{
                 let user=user_type_check.result[0].firstName;
                 let useremail=user_type_check.result[0].email;
                 let usertype=user_type_check.result[0].role;
@@ -28,6 +42,7 @@ const checkuser=async (req,res,next)=>{
                 res.locals.usertype=usertype;
                 res.locals.useremail=useremail;
                 return next();
+                }
             }
         })
     }else{
@@ -46,6 +61,7 @@ const checkuser=async (req,res,next)=>{
             
                 }else{
                    // console.log(get_guest_id.result.insertId);
+                   res.locals.usertype="Guest";
                     const id=get_guest_id.result.insertId;
                     const guest_token=jwt.sign({guest_id:id,},process.env.JWT_SECRET,{
                         expiresIn:process.env.JWT_Expires_in
@@ -69,6 +85,7 @@ const checkuser=async (req,res,next)=>{
                     res.status(403).render('error',{code:"403",message:"Undefined Error Occured"});
                 }else{
                     //console.log(decodedToken);
+                    res.locals.usertype="Guest";
                     var id= decodedToken.guest_id;
                     res.locals.guest_num=id;
                     

@@ -1,0 +1,179 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script>   
+     <link rel="stylesheet" href='/css/othernavstyles.css'>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href='/css/footerstyles.css'>
+    <title>Annual Sales</title>
+</head>
+<body>
+  
+   {{> navigation }}
+   <br><br>
+    <div class="container mt-4">
+        <form  method="POST">
+            <div class="mb-3">
+                <div class="form-group">
+                   
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-6">
+                            <input class="form-control" list="datalistOptions" id="year_needed" placeholder="Enter Year to get Sales Report......" name='year'>
+                            <datalist id="datalistOptions">
+
+                                    <option value= '2021'>
+                                    <option value= '2020'>
+                                    <option value= '2019'>      
+                                    <option value= '2018'>
+
+                                        
+                            </datalist>
+
+                        </div>
+                        
+                            <div class="col-3">
+                                
+                            <button type="submit" class="btn btn-primary btn" formaction="" id="get_report">Get Report</button>
+                            </div>
+                    </div>
+                    
+                     <div class="row">
+                        <div class="col-3"></div>
+                    <div class="col-6">
+                        <span  id='quarter_message_id' style="color: red;">
+                        
+                        </span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            </form>
+    </div>
+
+    <br><br><br>
+
+        <div class="container" style="border:1px solid #7c4747">
+             <div class="row justify-content-md-center" style="font-size:30px" id="quarter_heading">Quarterly Sales Report</div>
+             <br>
+    <table class="table table-hover" id='annual_quarter'>
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Product ID</th>
+            <th scope="col">Product name</th>
+            <th scope="col">Quarter 1</th>
+            <th scope="col">Quarter 2</th>
+            <th scope="col">Quarter 3</th>
+            <th scope="col">Quarter 4</th>
+            <th scope="col">Annual Total</th>
+           
+            
+          </tr>
+        </thead>
+        <tbody id='annual_quarter_body'></tbody>
+        </table>
+        <br><br>
+            <div class="row">
+                    <div class="col-5"></div>
+                    <div class="col-6">
+                        <span  id='quarter_table_id' style="color: red;"></span>
+                        </div></div>
+        </div><br><br>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Third party plugin JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <!-- Contact form JS-->
+        <script src="assets/mail/jqBootstrapValidation.js"></script>
+        <script src="assets/mail/contact_me.js"></script>
+        <!-- Core theme JS-->
+        <script src="/js/scripts.js"></script>
+
+        <script>
+
+            $('#get_report').click(function(e){  
+                e.preventDefault();
+                var year = $("#year_needed").val();
+                if(year.length<4){
+                    $('#quarter_message_id').html("Incorrect Year Selected.");
+                }
+                else{
+                $("#annual_quarter tbody").empty();
+                $("#quarter_table_id").empty();
+                $("#quarter_message_id").empty();
+                $('#quarter_heading').text('Quarterly Sales Report - '+year);
+                
+                $.ajax({ 
+                    url: '/sales_manager/report/annual_sales_report/'+year,
+                    type: 'POST',
+                    cache: false, 
+                    /*data: {
+                        'city': 'pune',
+                        'country': 'India',
+                    },*/ 
+                    success: function(data){
+                       
+                        console.log(data.length);
+                        if(data.length>0){
+                            var quarter1=0;
+                            var quarter2=0;
+                            var quarter3=0;
+                            var quarter4=0;
+                            var total=0;
+                            
+                        for(var i =0;i<data.length;i++){
+                            quarter1+=parseFloat(data[i]["quarters"]["quarter1"]);
+                            quarter2+=parseFloat(data[i]["quarters"]["quarter2"]);
+                            quarter3+=parseFloat(data[i]["quarters"]["quarter3"]);
+                            quarter4+=parseFloat(data[i]["quarters"]["quarter4"]);
+                            total+=data[i]["productSale"];
+
+                            //console.log(data[i]["productName"]);
+                            //console.log(data[i]["quarters"]["quarter2"]);
+                            var newRowContent="<tr>";
+                            newRowContent+="<td>"+data[i]["productId"]+"</td>";
+                            newRowContent+="<td>" + data[i]["productName"] + "</td>";
+                            newRowContent+='<td>'+data[i]["quarters"]["quarter1"] +'</td>';
+                            newRowContent+='<td>'+data[i]["quarters"]["quarter2"] +'</td>';
+                            newRowContent+='<td>'+data[i]["quarters"]["quarter3"] +'</td>';
+                            newRowContent+='<td>'+data[i]["quarters"]["quarter4"] +'</td>';
+                            newRowContent+='<td>'+ data[i]["productSale"] +'</td>';
+                            newRowContent+="</tr>"
+               
+                            jQuery("#annual_quarter tbody").append(newRowContent);
+                        }
+                        console.log(quarter1,quarter2,quarter3,quarter4,total);
+                            
+                            var newRowContent="<tr class='table-warning' style='font-size:20px;outline: thin solid'>";
+                            newRowContent+="<td colspan='2' style='text-align:center'>"+"Total"+"</td>";
+                            
+                            newRowContent+='<td>'+quarter1 +'</td>';
+                            newRowContent+='<td>'+quarter2+'</td>';
+                            newRowContent+='<td>'+quarter3 +'</td>';
+                            newRowContent+='<td>'+quarter4 +'</td>';
+                            newRowContent+='<td>'+total+'</td>';
+                            newRowContent+="</tr>"
+               
+                            jQuery("#annual_quarter tbody").append(newRowContent);
+                        }
+                        else{
+                            $('#quarter_table_id').html("No Sales results for the Selected Year.");
+                        }
+
+                        
+                    }
+                    
+                    })
+                    }
+                });            
+        </script>
+  <br><br><br><br>
+    {{>footer}}
+</body>
+</html>

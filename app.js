@@ -31,7 +31,22 @@ hbs.registerPartials(__dirname + '/views/partials');
 hbs.registerHelper('ifeq', function (a, b, options) { 
     if (a == b) { 
         return options.fn(this); }
-    return options.inverse(this);
+    else {
+        return options.inverse(this);
+        }
+    //return options.inverse(this);
+});
+
+
+const flash = require('connect-flash');
+var session = require('express-session');
+app.use(session({secret: '{secret}', name: 'session_id', saveUninitialized: true, resave: true}));
+app.use(flash());
+
+// Add errors on locals.
+app.use(function (req, res, next) {
+  res.locals.errors = req.flash("error");
+  next();
 });
 
 
@@ -46,8 +61,9 @@ app.use("/warehouse_officer",require("./routes/warehouse_officer"));
 
 
 //if undefined url is called error page renderd
-app.get('*', function(req, res){
-    res.render('error',{code:"404",message:"Page Not Found"});
+app.get('/*', (req, res)=>{
+    //console.log("page not found");
+    res.status(400).render('error',{code:"404",message:"Page Not Found"});
   });
 
 
