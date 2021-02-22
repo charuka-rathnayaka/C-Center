@@ -1,16 +1,11 @@
 const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
-
 const NormalUser=process.env.NormalUser;
 const NormalUserPwd=process.env.NormalUserPwd;
-
-
 class User {
     constructor() {
-      
-      _database.set(this, new Database(NormalUser, NormalUserPwd));
-     
+      _database.set(this, new Database(NormalUser,NormalUserPwd));
     }
 
 //Function to log the user in. This is common to all users
@@ -49,7 +44,6 @@ class User {
             connectionError: _database.get(this).connectionError,
           };
           result.error ? (obj.error = true) : (obj.result = result.result);
-         // console.log("new",obj)
           resolve(obj);
         });
       }
@@ -68,7 +62,6 @@ class User {
             connectionError: _database.get(this).connectionError,
           };
           result.error ? (obj.error = true) : (obj.result = result.result);
-         // console.log("trend",result.result);
           resolve(obj);
         });
       }
@@ -87,18 +80,80 @@ class User {
           let obj = {
             connectionError: _database.get(this).connectionError,
           };
-         
           result.error ? (obj.error = true) : (obj.result = result.result);
-         
           resolve(obj);
         });
+        
+
   }
   
-  async orderIteams(ContactName, contactnumber,pickupdate,payment,Cart_ID) {
+  
+
+     async showInformation(product_id){
         var result = await _database
           .get(this)
           .select_query(
           
+            'SELECT * FROM (SELECT * FROM (SELECT item.productId,item.itemId,attribute.attributeName,itemdetail.value,attribute.attributeId FROM ((item INNER JOIN itemdetail ON item.itemId = itemdetail.itemId) INNER JOIN attribute ON itemdetail.attributeId = attribute.attributeId) ) AS A NATURAL JOIN product)AS B WHERE productId=?',
+            [product_id]   
+          );
+        
+        return new Promise((resolve,reject)=>{
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            }
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            resolve(obj);
+            
+        })
+      }
+      async showItemInformation(item_id){
+        var result = await _database
+          .get(this)
+          .select_query(
+          
+            'SELECT * FROM (SELECT * FROM (SELECT item.productId,item.itemId,attribute.attributeName,itemdetail.value,attribute.attributeId FROM ((item INNER JOIN itemdetail ON item.itemId = itemdetail.itemId) INNER JOIN attribute ON itemdetail.attributeId = attribute.attributeId) ) AS A NATURAL JOIN product)AS B WHERE itemId=?',
+            [item_id]   
+          );
+        
+        return new Promise((resolve,reject)=>{
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            }
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            
+            resolve(obj);
+            
+        })
+      }
+      
+     
+      async addToCart(cartId,quantity,itemId){
+        var result = await _database
+          .get(this)
+          .select_query(
+          
+            'INSERT INTO `cartaddition`( `cartId`, `itemId`, `amount`, `dateOfAddition`) VALUES (?,?,?,(SELECT CURRENT_DATE()))',
+            [cartId,itemId,quantity]
+
+          );
+        
+        return new Promise((resolve,reject)=>{
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            }
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            
+            resolve(obj);
+            
+        })
+      }
+      
+
+  async orderIteams(ContactName, contactnumber,pickupdate,payment,Cart_ID) {
+    var result = await _database
+    .get(this)
+    .select_query(
             'CALL pickup_Order_Iteam(?,?,?,?,?,?)',
             [Cart_ID,"notDelivered",pickupdate,contactnumber,ContactName,payment]   
           );
@@ -115,6 +170,8 @@ class User {
   }
  
 
+
 }
+
 
 module.exports = User;

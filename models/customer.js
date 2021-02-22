@@ -84,6 +84,64 @@ class Customer {
           resolve(obj);
         });
       }
+      async createCart(email){
+        
+        var result = await _database
+          .get(this)
+          .call_procedure("create_cart_customer",
+            [email]
+          );
+          
+          
+          return new Promise((resolve,reject)=>{
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            }
+              result.error ? (obj.error = true) : (obj.result = result.result);
+              resolve(obj);
+    
+          })
+  
+        
+                
+      }
+     
+      async checkCart(email){
+        var result = await _database
+          .get(this)
+          .select_query(
+            'SELECT MAX(cartId) AS cartid FROM ` customercart` NATURAL JOIN `cart` WHERE email=? AND state="open"',
+            [email]
+          );
+          
+          return new Promise((resolve) => {
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            };
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            resolve(obj);
+          });
+      }
+      async getCartId(email){
+        
+        var result=await _database
+        .get(this)
+        .select_query(
+          'SELECT max(cartId) AS cartid FROM customercart WHERE email=?  ',
+          [email]
+        );
+        
+        return new Promise((resolve,reject)=>{
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          }
+          result.error ? (obj.error = true) : (obj.result = result.result);
+                  
+          resolve(obj);
+                  
+        })
+
+      }
 
 
 }
