@@ -2,9 +2,13 @@ const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
 
+const SalesManagerUser=process.env.SalesManagerUser;
+const SalesManagerPwd=process.env.SalesManagerPwd;
+
 class SalesManager{
     constructor() {
-      _database.set(this, new Database());
+      //console.log(SalesManagerUser,SalesManagerPwd);
+      _database.set(this, new Database(SalesManagerUser,SalesManagerPwd));
     }
 
     //function to get division-category details to frontend
@@ -223,6 +227,7 @@ class SalesManager{
             let obj = {
               connectionError: _database.get(this).connectionError,
             };
+           // console.log(obj);
             result.error ? (obj.error = true) : (obj.result = result.result);
             resolve(obj);
           });

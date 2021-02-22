@@ -2,9 +2,15 @@ const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
 
+const NormalUser=process.env.NormalUser;
+const NormalUserPwd=process.env.NormalUserPwd;
+
+
 class User {
     constructor() {
-      _database.set(this, new Database());
+      
+      _database.set(this, new Database(NormalUser, NormalUserPwd));
+     
     }
 
 //Function to log the user in. This is common to all users
@@ -43,6 +49,7 @@ class User {
             connectionError: _database.get(this).connectionError,
           };
           result.error ? (obj.error = true) : (obj.result = result.result);
+         // console.log("new",obj)
           resolve(obj);
         });
       }
@@ -61,6 +68,7 @@ class User {
             connectionError: _database.get(this).connectionError,
           };
           result.error ? (obj.error = true) : (obj.result = result.result);
+         // console.log("trend",result.result);
           resolve(obj);
         });
       }
@@ -79,7 +87,9 @@ class User {
           let obj = {
             connectionError: _database.get(this).connectionError,
           };
+         
           result.error ? (obj.error = true) : (obj.result = result.result);
+         
           resolve(obj);
         });
   }

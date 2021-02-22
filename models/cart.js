@@ -1,8 +1,10 @@
 const Database = require("../database/database");
 const _database = new WeakMap();
+const NormalUser=process.env.NormalUser;
+const NormalUserPwd=process.env.NormalUserPwd;
 class Cart{
     constructor(){
-        _database.set(this, new Database());
+        _database.set(this, new Database(NormalUser,NormalUserPwd));
         this.tableName="";
     }
 

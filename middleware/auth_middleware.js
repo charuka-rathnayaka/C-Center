@@ -30,7 +30,7 @@ const checkuser=async (req,res,next)=>{
                     return;
                 }
                 if(user_type_check.error==true){
-                    console.log("connection error");
+                    console.log("Unexpected Error");
                     res.render('error',{code:"500",message:"Server is temporary down"});
                     return;
                 }
