@@ -2,9 +2,13 @@ const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
 
+const AdminUser=process.env.AdminUser;
+const AdminUserPwd=process.env.AdminUserPwd;
+
+
 class Admin {
     constructor() {
-      _database.set(this, new Database());
+      _database.set(this, new Database(AdminUser,AdminUserPwd));
     }
 
         //Function check the employee email is previously used

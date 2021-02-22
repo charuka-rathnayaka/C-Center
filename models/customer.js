@@ -1,10 +1,13 @@
 const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
+const CustomerUser=process.env.CustomerUser;
+const CustomerUserPwd=process.env.CustomerUserPwd;
+
 
 class Customer {
     constructor() {
-      _database.set(this, new Database());
+      _database.set(this, new Database(CustomerUser,CustomerUserPwd));
     }
 
     //function to get customer profile details to profile page

@@ -1,10 +1,11 @@
 const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
-
+const WareHouseOfficerUser=process.env.WareHouseOfficerUser;
+const WareHouseOfficerPwd=process.env.WareHouseOfficerPwd;
 class WarehouseOfficer {
     constructor() {
-      _database.set(this, new Database());
+      _database.set(this, new Database(WareHouseOfficerUser,WareHouseOfficerPwd));
     }
 
 
