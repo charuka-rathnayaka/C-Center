@@ -25,7 +25,7 @@
     <div class="container mt-4">
         <div class="jumbotron">
             <h1 class="display-4">My Cart</h1>
-            <h2>{{totalcount}} products in the cart</h2>
+            <h2 id="totalHeader">{{totalcount}} products in the cart</h2>
             <table>
                 <tbody>
                     {{#each data}}
@@ -59,12 +59,12 @@
                                             <div class="cardlink">
 
                                                 <button class="btn"
-                                                    onclick="remove('{{this.cartId}}','{{this.itemId}}','{{this.productName}}')">Remove</button>
+                                                    onclick="remove('{{this.cartId}}','{{this.itemId}}','{{this.productName}}')"><front style="color: blue;"><u>Remove</u></front></button>
                                             </div>
                                             <div class="qntity">
                                                 <form id="myform" action="">
                                                     <input type="number" class="size-12" id="qn" value={{this.count}}
-                                                        min="0" max="10" step="1"
+                                                        min="0" max="1000" step="1"
                                                         onchange=update(this.value,{{this.price}},{{this.cartId}},{{this.itemId}})>
                                                 </form>
                                             </div>
@@ -153,6 +153,7 @@
                     $('#totalcount').html(("Items(").concat(data.totalcount).concat(")"));
                     $('#subtotal').html(("LKR.").concat(data.subtotal));
                     $('#subtotala').html(("LKR.").concat(data.subtotal));
+                    $('#totalHeader').html(("").concat(data.totalcount).concat(" products in the cart"));
                 }
                 else {
                     window.location.href = '/mycart';
@@ -185,6 +186,7 @@
                     $('#totalcount').html(("Items(").concat(data.totalcount).concat(")"));
                     $('#subtotal').html(("LKR.").concat(data.subtotal));
                     $('#subtotala').html(("LKR.").concat(data.subtotal));
+                    $('#totalHeader').html((data.totalcount).concat(" products in the cart"));
                 }
                 else {
                     window.location.href = '/mycart';
