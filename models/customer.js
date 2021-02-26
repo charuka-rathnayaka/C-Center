@@ -15,7 +15,7 @@ class Customer {
         var result = await _database
           .get(this)
           .select_query(
-            'SELECT * From customer WHERE email=?',
+            'SELECT * From customer natural join maincity WHERE email=?',
             [email] 
           );
         return new Promise((resolve) => {
@@ -50,15 +50,17 @@ class Customer {
 
       //Function to register customers
       async register_insert(firstname,lastname,email,address,city,birthday,contactnumber,password) {
-        let hashedpassword= await bcrypt.hash(password,8);
+        //console.log('register model')
+        const salt= await bcrypt.genSalt();
+        let hashedpassword= await bcrypt.hash(password,salt);
         var result = await _database
           .get(this)
           .select_query(
-            'INSERT INTO customer SET ?',
-            {email:email,firstName:firstname,lastName:lastname, address:address, city:city, dateOfBirth:birthday,contactNumber:contactnumber, password:hashedpassword}
+            'INSERT INTO customer (email,firstName,lastName,address,cityCode,dateOfBirth,contactNumber,password) values (?,?,?,?,?,?,?,?)',
+            [email,firstname,lastname, address,city, birthday,contactnumber,hashedpassword]
            
           );
-       // console.log("model",result);
+        //console.log("model",result);
         return new Promise((resolve) => {
           let obj = {
             connectionError: _database.get(this).connectionError,

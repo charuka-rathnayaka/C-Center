@@ -99,7 +99,7 @@ exports.get_home_details=async (req,res,next)=>{
         var j;
                     
         let trend_products={"trend_products":{}};
-        for (j = 0; j < 5; j++) {
+        for (j = 0; j < 6; j++) {
             if (trending_products_result.result[j]) {
                 if (j <= trending_products_result.result.length) {
                     var trendprod = "product" + j;
@@ -108,6 +108,7 @@ exports.get_home_details=async (req,res,next)=>{
                 }
             }
             res.locals.trend_products = trend_products;
+            
         }
            // console.log("lengtth",trend_products);
                     

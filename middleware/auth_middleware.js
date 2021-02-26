@@ -23,7 +23,7 @@ const checkuser=async (req,res,next)=>{
             
             else{
                 const user_type_check = await userc.get_user(decodedToken.email);
-                //console.log(user_type_check);
+               // console.log(user_type_check);
                 if(user_type_check.connectionError==true){
                     console.log("connection error");
                     res.render('error',{code:"500",message:"Server is temporary down"});

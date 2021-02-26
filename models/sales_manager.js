@@ -255,7 +255,7 @@ class SalesManager{
           var result = await _database
             .get(this)
             .select_query(
-              "SELECT `customer`.`email`,`customer`.`firstName`,`customer`.`lastName`,`cart`.`cartId`,`product`.`productId`, `product`.`productName`,`item`.`itemId`,`cart`.`dateOfPurchase`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `customercart` on `cart`.`cartId`=`customercart`.`cartId` LEFT join `customer` on `customercart`.`email`=`customer`.`email` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 and `customer`.`email`=?",
+              "SELECT `customer`.`email`,`customer`.`firstName`,`customer`.`lastName`,`cart`.`cartId`,`product`.`productId`, `product`.`productName`,`item`.`itemId`,`cart`.`dateOfPurchase`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `customercart` on `cart`.`cartId`=`customercart`.`cartId` LEFT join `customer` on `customercart`.`customerId`=`customer`.`customerId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 and `customer`.`email`=?",
               [email]
             );
          
