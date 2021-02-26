@@ -32,7 +32,8 @@ class Admin {
 
       //function to insert new employee details to db
       async employee_register_insert(firstname,lastname,email,recruitment_day,role,birthday,contactnumber,password) {
-        let hashedpassword= await bcrypt.hash(password,8);
+        const salt= await bcrypt.genSalt();
+        let hashedpassword= await bcrypt.hash(password,salt);
         var result = await _database
           .get(this)
           .select_query(
