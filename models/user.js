@@ -72,7 +72,7 @@ class User {
           .get(this)
           .select_query(
           
-            'select email,password,firstName,role from `employee` where email=? union select email,password,firstName,"customer" as Role from `customer` where email=?',
+            'select email,password,firstName,role,employeeId as Id from `employee` where email=? union select email,password,firstName,"customer" as role, customerId as Id from `customer` where email=?',
             [email,email]   
           );
      
