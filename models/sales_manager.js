@@ -127,12 +127,10 @@ class SalesManager{
           var result = await _database
             .get(this)
             .select_query(
-              
-              'SELECT `product`.`productId`, `product`.`productName`,`cart`.`dateOfPurchase`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 AND YEAR(`cart`.`dateOfPurchase`)=?',
+              'SELECT * FROM `annual_sales` WHERE YEAR(`annual_sales`.`dateOfPurchase`)=?',
+              //'SELECT `product`.`productId`, `product`.`productName`,`cart`.`dateOfPurchase`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 AND YEAR(`cart`.`dateOfPurchase`)=?',
               [year]
-              
             );
-         
           return new Promise((resolve) => {
             let obj = {
               connectionError: _database.get(this).connectionError,
@@ -202,6 +200,7 @@ class SalesManager{
           var result = await _database
             .get(this)
             .select_query(
+             // "SELECT `top_products` where `itemdetail`.`attributeId`=4 AND (DATE(`cartaddition`.`dateOfAddition`) BETWEEN ? AND ?)",
               "SELECT `product`.`productId`, `product`.`productName`,COUNT(`item`.`itemId`) as productQuantity,SUM(`itemdetail`.`value`) as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 AND (DATE(`cartaddition`.`dateOfAddition`) BETWEEN ? AND ?) GROUP BY `product`.`productId` ORDER BY productQuantity desc LIMIT 10",
               [startdate,enddate]
             );
@@ -219,15 +218,12 @@ class SalesManager{
           var result = await _database
             .get(this)
             .select_query(
-              "SELECT `category`.`categoryId`,`category`.`categoryName`,COUNT(`item`.`itemId`) as productQuantity,SUM(`itemdetail`.`value`) as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` RIGHT JOIN `productcategorydetail` on `product`.`productId`=`productcategorydetail`.`productId` NATURAL JOIN `category` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 GROUP BY `category`.`categoryId` ORDER BY productQuantity desc LIMIT 10",
-             
+            "SELECT * FROM `top_categories`;",  
             );
-         
           return new Promise((resolve) => {
             let obj = {
               connectionError: _database.get(this).connectionError,
             };
-           // console.log(obj);
             result.error ? (obj.error = true) : (obj.result = result.result);
             resolve(obj);
           });
@@ -237,7 +233,8 @@ class SalesManager{
           var result = await _database
             .get(this)
             .select_query(
-              "SELECT `product`.`productId`,`product`.`productName`,SUM(`itemdetail`.`value`) as productSale,count(`item`.`itemId`) as saleQuantity,DATE_FORMAT(`cartaddition`.`dateOfAddition`, '%m-%Y') as monthYear FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 AND `product`.`productId`=? GROUP by `product`.`productId`,Month(`cartaddition`.`dateOfAddition`), Year(`cartaddition`.`dateOfAddition`) ORDER BY `saleQuantity` DESC LIMIT 5",
+              "SELECT * FROM `most_prefer_period` WHERE `productId`=?",
+             // "SELECT `product`.`productId`,`product`.`productName`,SUM(`itemdetail`.`value`) as productSale,count(`item`.`itemId`) as saleQuantity,DATE_FORMAT(`cartaddition`.`dateOfAddition`, '%m-%Y') as monthYear FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 AND `product`.`productId`=? GROUP by `product`.`productId`,Month(`cartaddition`.`dateOfAddition`), Year(`cartaddition`.`dateOfAddition`) ORDER BY `saleQuantity` DESC LIMIT 5",
               [product_id]
             );
          
@@ -255,7 +252,8 @@ class SalesManager{
           var result = await _database
             .get(this)
             .select_query(
-              "SELECT `customer`.`email`,`customer`.`firstName`,`customer`.`lastName`,`cart`.`cartId`,`product`.`productId`, `product`.`productName`,`item`.`itemId`,`cart`.`dateOfPurchase`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `customercart` on `cart`.`cartId`=`customercart`.`cartId` LEFT join `customer` on `customercart`.`customerId`=`customer`.`customerId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 and `customer`.`email`=?",
+              "SELECT * FROM `customer_orders` WHERE `email`=?",
+              //"SELECT `customer`.`email`,`customer`.`firstName`,`customer`.`lastName`,`cart`.`cartId`,`product`.`productId`, `product`.`productName`,`item`.`itemId`,`cart`.`dateOfPurchase`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `customercart` on `cart`.`cartId`=`customercart`.`cartId` LEFT join `customer` on `customercart`.`customerId`=`customer`.`customerId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 and `customer`.`email`=?",
               [email]
             );
          
@@ -269,7 +267,6 @@ class SalesManager{
             else{
               obj.result = result.result;
               var db_result= result.result;
-            //  console.log(db_result);
               var data_out={"customer_data":{},"carts":[]}
               if(db_result.length>0){
                 data_out.customer_data["email"]=db_result[0].email;
@@ -279,23 +276,20 @@ class SalesManager{
                   var is_cart_insert=false;
                     for (var i=0;i<data_out.carts.length;i++){
                       if(data_out.carts[i].cart_details["cartId"]==db_result[j].cartId){
-                        //console.log("ifff",data_out.carts[i].cart_details["cartId"]);
                         is_cart_insert=true;
-                        //console.log(data_out)
                         (data_out.carts[i].cart_items).push({"productId":db_result[j].productId,"productName":db_result[j].productName,"itemId":db_result[j].itemId,"productSale":db_result[j].productSale});
                       }
                     }
                     if(is_cart_insert==false){
                       var moment = require("moment");
-                      //console.log(db_result[j].dateOfPurchase);
                       var purchasedate=(moment(db_result[j].dateOfPurchase).format("MMM Do YY"));
                       var json_data={"cart_details":{"cartId":db_result[j].cartId,"dateOfPurchase":purchasedate},"cart_items":[{"productId":db_result[j].productId,"productName":db_result[j].productName,"itemId":db_result[j].itemId,"productSale":db_result[j].productSale}]}; 
                       data_out.carts.push(json_data);
                     }
-                   // console.log(data_out.carts[0]);
+                 
                 }
               }
-             // console.log("edited data out",data_out)
+            
              obj.result = data_out;
             }
             resolve(obj);

@@ -43,6 +43,7 @@ class Database {
         .get(this)
         .query(query_name, values, (error, results, fields) => {
           resolve(_getResults.get(this)(error, results));
+        // console.log(error);
         });
     });
   
@@ -59,12 +60,8 @@ class Database {
             });
         });
       }
+      
     
-
-
-
-
-
 
 }
 module.exports = Database;

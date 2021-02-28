@@ -84,6 +84,10 @@ GRANT SELECT ON `c_center_db`.`cartaddition` TO 'sales_manager_role';
 GRANT SELECT ON `c_center_db`.`productcategorydetail` TO 'sales_manager_role';
 GRANT SELECT ON `c_center_db`.`customercart` TO 'sales_manager_role';
 GRANT SELECT ON `c_center_db`.`customer` TO 'sales_manager_role';
+GRANT SELECT ON `c_center_db`.`top_categories` TO 'sales_manager_role';
+GRANT SELECT ON `c_center_db`.`annual_sales` TO 'sales_manager_role';
+GRANT SELECT ON `c_center_db`.`most_prefer_period` TO 'sales_manager_role';
+GRANT SELECT ON `c_center_db`.`customer_orders` TO 'sales_manager_role';
 GRANT EXECUTE ON PROCEDURE `c_center_db`.`add_new_product` TO 'sales_manager_role';
 
 
