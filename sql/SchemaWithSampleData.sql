@@ -968,6 +968,20 @@ BEGIN
     COMMIT;
 END ;;
 DELIMITER ;
+
+drop view if exists top_categories;
+drop view if exists annual_sales;
+drop view if exists most_prefer_period;
+drop view if exists customer_orders;
+CREATE VIEW top_categories
+AS (SELECT `category`.`categoryId`,`category`.`categoryName`,COUNT(`item`.`itemId`) as productQuantity,SUM(`itemdetail`.`value`) as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` RIGHT JOIN `productcategorydetail` on `product`.`productId`=`productcategorydetail`.`productId` NATURAL JOIN `category` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 GROUP BY `category`.`categoryId` ORDER BY productQuantity desc LIMIT 10);
+CREATE VIEW annual_sales
+AS (SELECT `product`.`productId`, `product`.`productName`,`cart`.`dateOfPurchase`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` WHERE `itemdetail`.`attributeId`=4);
+CREATE VIEW most_prefer_period
+AS (SELECT `product`.`productId`,`product`.`productName`,SUM(`itemdetail`.`value`) as productSale,count(`item`.`itemId`) as saleQuantity,DATE_FORMAT(`cartaddition`.`dateOfAddition`, '%m-%Y') as monthYear FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 GROUP by `product`.`productId`,Month(`cartaddition`.`dateOfAddition`), Year(`cartaddition`.`dateOfAddition`) ORDER BY `saleQuantity` DESC LIMIT 5);
+CREATE VIEW customer_orders
+AS (SELECT `customer`.`email`,`customer`.`firstName`,`customer`.`lastName`,`cart`.`cartId`,`product`.`productId`, `product`.`productName`,`item`.`itemId`,`cart`.`dateOfPurchase`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `customercart` on `cart`.`cartId`=`customercart`.`cartId` LEFT join `customer` on `customercart`.`customerId`=`customer`.`customerId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4);
+
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
 /*!50003 SET character_set_client  = @saved_cs_client */ ;
 /*!50003 SET character_set_results = @saved_cs_results */ ;
