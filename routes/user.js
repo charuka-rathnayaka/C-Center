@@ -29,7 +29,7 @@ router.post('/mycart/remove', jsonParser, async function (req, res, next) {
 router.get('/carthistory',userController.getCartHistory);
 
 router.post('/mycart/js',jsonParser,async(req,res,next)=>{
-    var x= await userController.getHistory(req.res.locals.useremail,req.body.cartId);
+    var x= await userController.getHistory(req.res.locals.Id,req.body.cartId);
     res.json(x);
 });
 
