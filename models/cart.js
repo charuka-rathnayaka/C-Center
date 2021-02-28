@@ -110,12 +110,12 @@ class CustomerCart extends Cart{
         super();
         this.tableName="customercart";
     }
-    async getCartAdditions(email){
+    async getCartAdditions(customerId){
         var result= await _database
           .get(this)
           .select_query(
-            `select itemId,productName,photoLink,cartId,count(itemId) as "count",dateOfAddition from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where email=? and state='open' group by itemId order by dateOfAddition desc;`,
-            [email]
+            `select itemId,productName,photoLink,cartId,count(itemId) as "count",dateOfAddition from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where customerId=? and state='open' group by itemId order by dateOfAddition desc;`,
+            [customerId]
           );
         return new Promise((resolve)=>{
           let obj = {
@@ -126,12 +126,12 @@ class CustomerCart extends Cart{
         });
     }
 
-    async getCartAdditionsHistory(email){
+    async getCartAdditionsHistory(customerId){
       var result= await _database
         .get(this)
         .select_query(
-          `select cartId,count(itemId) as "count",dateOfPurchase from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where email=? and state='close' group by cartId order by dateOfPurchase desc;`,
-          [email]
+          `select cartId,count(itemId) as "count",dateOfPurchase from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where customerId=? and state='close' group by cartId order by dateOfPurchase desc;`,
+          [customerId]
         );
       return new Promise((resolve)=>{
         let obj = {
@@ -141,12 +141,12 @@ class CustomerCart extends Cart{
         resolve(obj);
       });
     }
-    async getItemHistory(email,cartId){
+    async getItemHistory(customerId,cartId){
       var result= await _database
         .get(this)
         .select_query(
-          `select itemId,productName,photoLink,cartId,count(itemId) as "count",dateOfAddition,dateOfPurchase from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where email=? and state='close' and cartId=? group by itemId,cartId order by dateOfAddition desc;`,
-          [email,cartId]
+          `select itemId,productName,photoLink,cartId,count(itemId) as "count",dateOfAddition,dateOfPurchase from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where customerId=? and state='close' and cartId=? group by itemId,cartId order by dateOfAddition desc;`,
+          [customerId,cartId]
         );
       return new Promise((resolve)=>{
         let obj = {
