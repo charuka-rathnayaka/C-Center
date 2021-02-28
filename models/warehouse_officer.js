@@ -72,7 +72,7 @@ class WarehouseOfficer {
         custom_attributes=custom_attributes.substring(0, custom_attributes.length-1);
         custom_attribute_values=custom_attribute_values.substring(0, custom_attribute_values.length-1);
         }
-        console.log(custom_attributes,custom_attribute_values);
+        //console.log("custom",custom_attributes,custom_attribute_values);
         var result = await _database
         .get(this)
         .call_procedure("add_new_item", [
