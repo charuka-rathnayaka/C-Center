@@ -125,12 +125,14 @@ exports.get_home_details=async (req,res,next)=>{
 exports.getCartAdditionList= async(req,res)=>{
     console.log(req.res.locals.useremail);
     console.log(req.res.locals.usertype);
+    console.log(req.res.locals.Id);
     if(req.res.locals.useremail){
         var cusCart= new CustomerCart();
-        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.useremail);
+        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.Id);
         setData(carAdditiontList,cusCart);
     }
     else{
+        console.log(req.res.locals.guest_num);
         var gstCart= new GuestCart();
         //console.log(req.res.locals.guest_num);
         const carAdditiontList= await gstCart.getCartAdditions(req.res.locals.guest_num);
@@ -240,7 +242,7 @@ exports.changeQuntity = async (itemId, cartId, value) => {
 
 exports.getCartHistory= async(req,res)=>{
     var cusCart= new CustomerCart();
-    const purchasedCarts = await cusCart.getCartAdditionsHistory(req.res.locals.useremail); 
+    const purchasedCarts = await cusCart.getCartAdditionsHistory(req.res.locals.Id); 
     if(purchasedCarts.connectionError==true){
         console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
@@ -267,7 +269,7 @@ exports.getCartHistory= async(req,res)=>{
                 day = '0' + day;
             }
             var dd= [year, month, day].join('-');
-            const itms= await cusCart.getItemHistory(req.res.locals.useremail,cartId);
+            const itms= await cusCart.getItemHistory(req.res.locals.Id,cartId);
             if(itms.connectionError==true){
                 res.send('error',{code:"500",message:"server is down"});
                 return;
@@ -296,10 +298,10 @@ exports.getCartHistory= async(req,res)=>{
         res.render('cartHistory',{data:lst});
     }
 }
-exports.getHistory= async(email,cartId)=>{
+exports.getHistory= async(customerId,cartId)=>{
     var cusCart= new CustomerCart();
     //console.log(email);
-    const itm= await cusCart.getItemHistory(email,cartId);
+    const itm= await cusCart.getItemHistory(customerId,cartId);
     if(itm.connectionError==true){
         console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
@@ -477,7 +479,7 @@ exports.getCartAdditionListjson= async(req,res)=>{
     var cart = new Cart();
     if(req.res.locals.useremail){
         var cusCart= new CustomerCart();
-        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.useremail);
+        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.Id);
         setData(carAdditiontList,cusCart);
     }
     else{
