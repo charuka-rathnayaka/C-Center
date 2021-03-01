@@ -864,7 +864,7 @@ exports.get_div_details=async (req,res)=>{
         var divisionPageResult = {};
         divisionPageResult.thisDivision = req.url.substring(11,)+'s';
         divisionPageResult.categories = categories;        
-        console.log(divisionPageResult);       
+        //console.log(divisionPageResult);       
         //res.locals.categories=categories;
         res.locals.divisionPageResult=divisionPageResult;
     }
