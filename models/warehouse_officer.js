@@ -1,10 +1,11 @@
 const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
-
+const WareHouseOfficerUser=process.env.WareHouseOfficerUser;
+const WareHouseOfficerPwd=process.env.WareHouseOfficerPwd;
 class WarehouseOfficer {
     constructor() {
-      _database.set(this, new Database());
+      _database.set(this, new Database(WareHouseOfficerUser,WareHouseOfficerPwd));
     }
 
 
@@ -71,7 +72,7 @@ class WarehouseOfficer {
         custom_attributes=custom_attributes.substring(0, custom_attributes.length-1);
         custom_attribute_values=custom_attribute_values.substring(0, custom_attribute_values.length-1);
         }
-        console.log(custom_attributes,custom_attribute_values);
+        //console.log("custom",custom_attributes,custom_attribute_values);
         var result = await _database
         .get(this)
         .call_procedure("add_new_item", [

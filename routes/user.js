@@ -25,6 +25,14 @@ router.post('/mycart/remove', jsonParser, async function (req, res, next) {
     await userController.RemoveItem(req.body.itemId,req.body.cartId);
     next();
 },userController.getCartAdditionListjson);
+
+router.get('/carthistory',userController.getCartHistory);
+
+router.post('/mycart/js',jsonParser,async(req,res,next)=>{
+    var x= await userController.getHistory(req.res.locals.Id,req.body.cartId);
+    res.json(x);
+});
+
 router.post('/mycart/json',jsonParser, async function (req, res, next) {
      
     await userController.changeQuntity(req.body.itemId, req.body.cartId, req.body.value);

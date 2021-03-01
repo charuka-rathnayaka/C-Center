@@ -99,7 +99,7 @@ exports.get_home_details=async (req,res,next)=>{
         var j;
                     
         let trend_products={"trend_products":{}};
-        for (j = 0; j < 5; j++) {
+        for (j = 0; j < 6; j++) {
             if (trending_products_result.result[j]) {
                 if (j <= trending_products_result.result.length) {
                     var trendprod = "product" + j;
@@ -108,6 +108,7 @@ exports.get_home_details=async (req,res,next)=>{
                 }
             }
             res.locals.trend_products = trend_products;
+            
         }
            // console.log("lengtth",trend_products);
                     
@@ -123,14 +124,17 @@ exports.get_home_details=async (req,res,next)=>{
 
 exports.getCartAdditionList= async(req,res)=>{
     console.log(req.res.locals.useremail);
+    console.log(req.res.locals.usertype);
+    console.log(req.res.locals.Id);
     if(req.res.locals.useremail){
         var cusCart= new CustomerCart();
-        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.useremail);
+        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.Id);
         setData(carAdditiontList,cusCart);
     }
     else{
-        var gstCart= new GuestCart();
         console.log(req.res.locals.guest_num);
+        var gstCart= new GuestCart();
+        //console.log(req.res.locals.guest_num);
         const carAdditiontList= await gstCart.getCartAdditions(req.res.locals.guest_num);
         setData(carAdditiontList,gstCart);
     }
@@ -234,6 +238,102 @@ exports.changeQuntity = async (itemId, cartId, value) => {
         console.log("inserted");
     }
 
+}
+
+exports.getCartHistory= async(req,res)=>{
+    var cusCart= new CustomerCart();
+    const purchasedCarts = await cusCart.getCartAdditionsHistory(req.res.locals.Id); 
+    if(purchasedCarts.connectionError==true){
+        console.log(error);
+        res.render('error',{code:"500",message:"Server is down."});
+        return;
+    }
+    else{
+        //console.log(purchasedCarts.result);
+        var carts= purchasedCarts.result;
+        var lst=[];
+        var i;
+
+        for(i=0;i<carts.length;i++){
+            var amount=0;
+            var cartId= carts[i].cartId;
+            var count= carts[i].count;
+            var d= carts[i].dateOfPurchase;
+            month = '' + (d.getMonth() + 1);
+            day = '' + d.getDate();
+            year = d.getFullYear();
+            if (month.length < 2){ 
+                month = '0' + month;
+            }
+            if (day.length < 2){ 
+                day = '0' + day;
+            }
+            var dd= [year, month, day].join('-');
+            const itms= await cusCart.getItemHistory(req.res.locals.Id,cartId);
+            if(itms.connectionError==true){
+                res.send('error',{code:"500",message:"server is down"});
+                return;
+            }
+            else{
+                var itmlist= itms.result;
+                var z;
+                for(z=0;z<itmlist.length;z++){
+                    var itemId=itmlist[z].itemId;
+                    var cunt= itmlist[z].count;
+                    const itemprice= await cusCart.getPrice(itemId);
+                    if(itemprice.connectionError==true){
+                        res.send('error',{code:"500",message:"server is down"});
+                        return;
+                    }
+                    else{
+                        var price= itemprice.result[0].value;
+                        amount=amount+(parseInt(price)*parseInt(cunt));
+                    }
+                }
+            }
+            var obj={cartId:cartId,count:count,dateOfPurchase:dd,amount:amount};
+            lst.push(obj);
+        }
+        //console.log(lst);
+        res.render('cartHistory',{data:lst});
+    }
+}
+exports.getHistory= async(customerId,cartId)=>{
+    var cusCart= new CustomerCart();
+    //console.log(email);
+    const itm= await cusCart.getItemHistory(customerId,cartId);
+    if(itm.connectionError==true){
+        console.log(error);
+        res.render('error',{code:"500",message:"Server is down."});
+        return;
+    }
+    else{
+        //console.log(itm.result);
+        var data= itm.result;
+        var i;
+        var lst=[];
+        var cart= new Cart();
+        for(i=0;i<data.length;i++){
+            var productName=data[i].productName;
+            var photoLink= data[i].photoLink;
+            var count= data[i].count;
+            var itemId= data[i].itemId;
+            const x= await cart.getPrice(itemId);
+            if(itm.connectionError==true){
+                console.log(error);
+                res.render('error',{code:"500",message:"Server is down."});
+                return;
+            }
+            else{
+                var price= x.result[0].value;
+                console.log(price);
+                var obj={productName:productName,photoLink:photoLink,count:count,price:price};
+                lst.push(obj);
+            }
+        }
+        console.log(lst);
+        return lst;
+    }
 }
 
 
@@ -379,7 +479,7 @@ exports.getCartAdditionListjson= async(req,res)=>{
     var cart = new Cart();
     if(req.res.locals.useremail){
         var cusCart= new CustomerCart();
-        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.useremail);
+        const carAdditiontList= await cusCart.getCartAdditions(req.res.locals.Id);
         setData(carAdditiontList,cusCart);
     }
     else{

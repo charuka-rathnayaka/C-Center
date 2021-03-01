@@ -1,10 +1,11 @@
 const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
-
+const GuestUser=process.env.GuestUser;
+const GuestUserPwd=process.env.GuestUserPwd;
 class Guest {
     constructor() {
-      _database.set(this, new Database());
+      _database.set(this, new Database(GuestUser,GuestUserPwd));
     }
 
     //function to create a token id for guest and store it in db

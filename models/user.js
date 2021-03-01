@@ -1,10 +1,11 @@
 const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
-
+const NormalUser=process.env.NormalUser;
+const NormalUserPwd=process.env.NormalUserPwd;
 class User {
     constructor() {
-      _database.set(this, new Database());
+      _database.set(this, new Database(NormalUser,NormalUserPwd));
     }
 
 //Function to log the user in. This is common to all users
@@ -71,7 +72,7 @@ class User {
           .get(this)
           .select_query(
           
-            'select email,password,firstName,role from `employee` where email=? union select email,password,firstName,"customer" as Role from `customer` where email=?',
+            'select email,password,firstName,role,employeeId as Id from `employee` where email=? union select email,password,firstName,"customer" as role, customerId as Id from `customer` where email=?',
             [email,email]   
           );
      
@@ -169,5 +170,6 @@ class User {
 
 
 }
+
 
 module.exports = User;

@@ -65,11 +65,13 @@ BEGIN
         UNTIL i >= num_common_attributes
         END REPEAT;
 
+        IF LENGTH(custom_attribute_names)>0 THEN
         REPEAT SET j = j + 1;
         INSERT INTO  `attribute`(attributeName) VALUES (TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(custom_attribute_names, ',', j), ',', -1)));
         INSERT INTO  `itemdetail`(itemId,attributeId,value) VALUES (item_id, LAST_INSERT_ID(),TRIM(SUBSTRING_INDEX(SUBSTRING_INDEX(custom_attribute_values, ',', j), ',', -1)));
         UNTIL j >= num_custom_attributes
         END REPEAT;
+        END IF;
 
     COMMIT;
 END$$
