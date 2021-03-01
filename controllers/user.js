@@ -624,7 +624,11 @@ exports.getDetails=async (req,res)=>{
             }
             for (var j=0; j < items.length; j++){
                 if (items[j][0]==datum.id){
-                    items[j][1].push([datum.key,datum.value]);
+                    if (datum.key=="Price"){
+                        items[j].push(datum.value);
+                    }else{
+                        items[j][1].push([datum.key,datum.value]);
+                    }
                 }
             }
         
@@ -632,7 +636,7 @@ exports.getDetails=async (req,res)=>{
             
             
         }
-        console.log(items);
+        
         //send data to front end
         return res.status(200).render('items',{
             pageTitle:productDetails.result[0].productName,
@@ -674,11 +678,9 @@ exports.getItemDetails=async (req,res)=>{
                 items.push(datum.itemId,[],datum.productName,datum.description,datum.photoLink);
             }
             
-            if (datum.attributeName=="Price"){
-                items.push(datum.value);
-            }else{
+            
                 items[1].push([datum.attributeName,datum.value]);
-            }
+            
             
                
         }
