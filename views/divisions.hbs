@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>C Center</title>
+        <link rel="icon" type="image/x-icon" href="/assets/img/fast_cart.png" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v5.15.1/js/all.js" crossorigin="anonymous"></script>
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="/css/homestyles.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href='/css/footerstyles.css'>
+        
+
+   
+   
+   
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+         
+   {{> navigation }}
+        <!-- Masthead-->
+        {{> header }}
+        <div class="text-center">
+            <h4></h4>
+            <h2 class="section-heading text-uppercase">{{divisionPageResult.thisDivision}}</h2>
+            <h4></h4>
+        </div>
+        <h6></h6>
+        <div class="catNavBar">
+            <h6>Select a Category :</h6>
+            {{#each divisionPageResult.categories}}
+                <button class="catButton" id={{this.id}}>{{this.name}}</button>
+            {{/each}}
+
+            <div id="subCategoryNavigation"></div>
+        </div>
+        
+       
+        
+        <!-- Portfolio Grid-->
+        <section class="page-section bg-light" id="portfolio">
+            <div class="container">
+                <div class="row" id="productRows">
+                    {{#each div_products}}
+                        <div class="col-lg-4 col-sm-6 mb-4">
+                            <div class="portfolio-item">
+                                <a class="portfolio-link" href="/info/{{this.id}}">
+                                    <div class="portfolio-hover">
+                                        <div class="portfolio-hover-content"><i class="fa fa-cart-plus fa-4x"></i></div>
+                                    </div>
+                                    <img class="img-flui" src="/product_images/{{this.image}}" alt="" width="340px" height="280px" />
+                                </a>
+                                <div class="portfolio-caption">
+                                    <div class="portfolio-caption-heading">{{this.name}}</div>
+                                    <div class="portfolio-caption-subheading text-muted">{{this.desc}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    {{/each}}
+                </div>
+            </div>
+        </section>
+        <!-- About-->
+        
+        <!-- Team-->
+        
+        <!-- Footer-->
+        {{>footer}}
+        <!-- Portfolio Modals-->
+        <!-- Modal 1-->
+       
+        <!-- Bootstrap core JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Third party plugin JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <!-- Contact form JS-->
+        <script src="assets/mail/jqBootstrapValidation.js"></script>
+        <script src="assets/mail/contact_me.js"></script>
+        <!-- Core theme JS-->
+        <script src="/js/scripts.js"></script>
+
+        <script>
+
+            
+
+            $(".catButton").on('click', function(){
+                catId=this.id;
+                $.ajax({ 
+                    url: '/user/subCategories',
+                    type: 'POST',
+                    cache: false, 
+                    data: {
+                        'id': this.id
+                    }, 
+                    success: function(data){
+                        var catBtn = document.getElementsByClassName('catButton');
+                        for (var k=0; k<catBtn.length; k++){
+                            catBtn[k].className='catButton';
+                            if(catId == parseInt(catBtn[k].id)){
+                                catBtn[k].className += ' activeNow';
+                            }
+                        }
+                        document.getElementById('subCategoryNavigation').innerHTML = '<h6>Select a Sub-category :</h6>';
+                        for(i=0; i<data.subCategories.length; i++){
+                            document.getElementById('subCategoryNavigation').innerHTML += 
+                            "<button onclick=\"getSubCatProd("+data.subCategories[i].subCatId+","+catId+")\"class=\"subCatButton\" id=\""+data.subCategories[i].subCatId+"\">"+data.subCategories[i].subCatName+"</button>";
+                        }
+                        document.getElementById('productRows').innerHTML = ''
+                        for(i=0; i<data.cat_products.length; i++){
+                            document.getElementById('productRows').innerHTML += 
+                            "<div class=\"col-lg-4 col-sm-6 mb-4\">"+
+                                "<div class=\"portfolio-item\">"+
+                                    "<a class=\"portfolio-link\" href=\"/info/"+data.cat_products[i].id+"\">"+
+                                        "<div class=\"portfolio-hover\">"+
+                                            "<div class=\"portfolio-hover-content\"><i class=\"fa fa-cart-plus fa-4x\"></i></div>"+
+                                        "</div>"+
+                                        "<img class=\"img-flui\" src=\"/product_images/"+data.cat_products[i].image+"\" alt=\"\" width=\"340px\" height=\"280px\" />"+
+                                    "</a>"+
+                                    "<div class=\"portfolio-caption\">"+
+                                        "<div class=\"portfolio-caption-heading\">"+data.cat_products[i].name+"</div>"+
+                                        "<div class=\"portfolio-caption-subheading text-muted\">"+data.cat_products[i].desc+"</div>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>";
+                        }
+                    }
+                  });
+            });
+
+            //////////////////////////////////////////////////
+
+            function getSubCatProd(id,catId){
+                //console.log(catId);
+                $.ajax({ 
+                    url: '/user/subCategoryProd',
+                    type: 'POST',
+                    cache: false, 
+                    data: {
+                        'id': id,
+                        'catId' : catId
+                    }, 
+                    success: function(data){
+                        var subCatBtn = document.getElementsByClassName('subCatButton');
+                        for (var k=0; k<subCatBtn.length; k++){
+                            subCatBtn[k].className='subCatButton';
+                            if(id == parseInt(subCatBtn[k].id)){
+                                subCatBtn[k].className += ' activeNow';
+                            }
+                        }
+                        document.getElementById('productRows').innerHTML = ''
+                        for(i=0; i<data.sub_cat_products.length; i++){
+                            document.getElementById('productRows').innerHTML += 
+                            "<div class=\"col-lg-4 col-sm-6 mb-4\">"+
+                                "<div class=\"portfolio-item\">"+
+                                    "<a class=\"portfolio-link\" href=\"/info/"+data.sub_cat_products[i].id+"\">"+
+                                        "<div class=\"portfolio-hover\">"+
+                                            "<div class=\"portfolio-hover-content\"><i class=\"fa fa-cart-plus fa-4x\"></i></div>"+
+                                        "</div>"+
+                                        "<img class=\"img-flui\" src=\"/product_images/"+data.sub_cat_products[i].image+"\" alt=\"\" width=\"340px\" height=\"280px\" />"+
+                                    "</a>"+
+                                    "<div class=\"portfolio-caption\">"+
+                                        "<div class=\"portfolio-caption-heading\">"+data.sub_cat_products[i].name+"</div>"+
+                                        "<div class=\"portfolio-caption-subheading text-muted\">"+data.sub_cat_products[i].desc+"</div>"+
+                                    "</div>"+
+                                "</div>"+
+                            "</div>";
+                        }
+                    }
+                  });
+            }
+
+            
+        </script>
+    </body>
+</html>

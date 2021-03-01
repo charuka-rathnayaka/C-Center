@@ -52,6 +52,7 @@ exports.get_category_details=async (req,res)=>{
         
     }
     res.locals.message=req.flash('success');
+    res.locals.activepage="add_new_product";
     res.render('add_new_product');
    
 }
@@ -175,6 +176,7 @@ exports.get_most_saled_categories=async (req,res)=>{
   }
   else {
     res.locals.top_categories=most_saled_categories.result;
+    res.locals.activepage="reports";
      res.status(200).render('report/trending_category_report');
   }
 }

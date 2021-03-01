@@ -1,10 +1,13 @@
 const Database = require("../database/database");
 const _database = new WeakMap();
 const bcrypt=require("bcryptjs");
+const CustomerUser=process.env.CustomerUser;
+const CustomerUserPwd=process.env.CustomerUserPwd;
+
 
 class Customer {
     constructor() {
-      _database.set(this, new Database());
+      _database.set(this, new Database(CustomerUser,CustomerUserPwd));
     }
 
     //function to get customer profile details to profile page
@@ -12,7 +15,7 @@ class Customer {
         var result = await _database
           .get(this)
           .select_query(
-            'SELECT * From customer WHERE email=?',
+            'SELECT * From customer natural join maincity WHERE email=?',
             [email] 
           );
         return new Promise((resolve) => {
@@ -47,15 +50,17 @@ class Customer {
 
       //Function to register customers
       async register_insert(firstname,lastname,email,address,city,birthday,contactnumber,password) {
-        let hashedpassword= await bcrypt.hash(password,8);
+        //console.log('register model')
+        const salt= await bcrypt.genSalt();
+        let hashedpassword= await bcrypt.hash(password,salt);
         var result = await _database
           .get(this)
           .select_query(
-            'INSERT INTO customer SET ?',
-            {email:email,firstName:firstname,lastName:lastname, address:address, city:city, dateOfBirth:birthday,contactNumber:contactnumber, password:hashedpassword}
+            'INSERT INTO customer (email,firstName,lastName,address,cityCode,dateOfBirth,contactNumber,password) values (?,?,?,?,?,?,?,?)',
+            [email,firstname,lastname, address,city, birthday,contactnumber,hashedpassword]
            
           );
-       // console.log("model",result);
+        //console.log("model",result);
         return new Promise((resolve) => {
           let obj = {
             connectionError: _database.get(this).connectionError,
@@ -80,6 +85,65 @@ class Customer {
           result.error ? (obj.error = true) : (obj.result = result.result);
           resolve(obj);
         });
+      }
+      async createCart(Id){
+        
+        var result = await _database
+          .get(this)
+          .call_procedure("create_cart_customer",
+            [Id]
+          );
+          
+          
+          
+          return new Promise((resolve,reject)=>{
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            }
+              result.error ? (obj.error = true) : (obj.result = result.result);
+              resolve(obj);
+    
+          })
+  
+        
+                
+      }
+     
+      async checkCart(Id){
+        var result = await _database
+          .get(this)
+          .select_query(
+            'SELECT MAX(cartId) AS cartid FROM `customercart` NATURAL JOIN `cart` WHERE customerId=? AND state="open"',
+            [Id]
+          );
+          
+          return new Promise((resolve) => {
+            let obj = {
+              connectionError: _database.get(this).connectionError,
+            };
+            result.error ? (obj.error = true) : (obj.result = result.result);
+            resolve(obj);
+          });
+      }
+      async getCartId(Id){
+        
+        var result=await _database
+        .get(this)
+        .select_query(
+          'SELECT max(cartId) AS cartid FROM customercart WHERE customerId=?  ',
+          [Id]
+        );
+        
+        return new Promise((resolve,reject)=>{
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          }
+          result.error ? (obj.error = true) : (obj.result = result.result);
+                  
+          resolve(obj);
+                  
+        })
+
       }
 
 

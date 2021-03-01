@@ -14,6 +14,7 @@ const checkuser=async (req,res,next)=>{
             if(err){
                 console.log(err.message);
                 res.locals.user=null;
+                res.locals.Id=null;
                 res.locals.usertype=null;
                 res.locals.useremail=null;
                 res.status(403).render('error',{code:"403",message:"Undefined Error Occured"});
@@ -23,14 +24,14 @@ const checkuser=async (req,res,next)=>{
             
             else{
                 const user_type_check = await userc.get_user(decodedToken.email);
-                //console.log(user_type_check);
+               // console.log(user_type_check);
                 if(user_type_check.connectionError==true){
                     console.log("connection error");
                     res.render('error',{code:"500",message:"Server is temporary down"});
                     return;
                 }
                 if(user_type_check.error==true){
-                    console.log("connection error");
+                    console.log("Unexpected Error");
                     res.render('error',{code:"500",message:"Server is temporary down"});
                     return;
                 }
@@ -38,9 +39,12 @@ const checkuser=async (req,res,next)=>{
                 let user=user_type_check.result[0].firstName;
                 let useremail=user_type_check.result[0].email;
                 let usertype=user_type_check.result[0].role;
+                let userId=user_type_check.result[0].Id
+                ;
                 res.locals.user=user;
                 res.locals.usertype=usertype;
                 res.locals.useremail=useremail;
+                res.locals.Id=userId;
                 return next();
                 }
             }
@@ -52,6 +56,7 @@ const checkuser=async (req,res,next)=>{
         res.locals.user=null;
         res.locals.usertype=null;
         res.locals.useremail=null;
+        res.locals.Id=null;
         if(!guest_token){
             const get_guest_id = await guest.get_guest_id();
             if(get_guest_id .connectionError==true){

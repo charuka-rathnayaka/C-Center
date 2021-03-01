@@ -4,14 +4,14 @@ const _connectionError = new WeakMap();
 const _getResults = new WeakMap();
 
 class Database {
-  constructor() {
+  constructor(username,user_password) {
     try {
       _pool.set(this, mysql.createPool(
         {
             host: process.env.database_host,
-            //port: config.mysql.port,
-            user:process.env.database_user,
-            password : process.env.database_pwd,
+            //port:  process.env.port,
+            user:username,
+            password : user_password,
             database : process.env.database,
             connectionLimit : 10,
            
@@ -43,6 +43,7 @@ class Database {
         .get(this)
         .query(query_name, values, (error, results, fields) => {
           resolve(_getResults.get(this)(error, results));
+         console.log(error);
         });
     });
   
@@ -56,15 +57,10 @@ class Database {
             .get(this)
             .query(`CALL ??(?)`, [name, args], (error, results, fields) => {
               resolve(_getResults.get(this)(error, results));
+            //  console.log(error);
             });
         });
       }
-    
-
-
-
-
-
 
 }
 module.exports = Database;

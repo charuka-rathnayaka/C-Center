@@ -10,79 +10,124 @@
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav text-uppercase ml-auto">
                       {{#ifeq activepage "home"}}
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/" status="active">Home</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/" status="active" style="color:#fed136">Home</a></li>
                       {{else}}
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/" status="active">Home</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/">Home</a></li>
                       {{/ifeq}}
                        
                        {{#ifeq usertype "Guest"}}
-                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#trending_products">Trending</a></li>
+                        <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#trending_products" status="active">Trending</a></li>
                           <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            {{#ifeq activepage "divisions"}}
+                            <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" status="active" style="color:#fed136">
                                Divisions
                             </a>
+                            {{else}}
+                            <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color:#fff">
+                               Divisions
+                            </a>
+                            {{/ifeq}}
                               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#">Electronics</a></li>  
-                                <li><a class="dropdown-item" href="#">Toys</a></li>
+                                <li><a class="dropdown-item" href="/divisions/Electronic">Electronics</a></li>  
+                                <li><a class="dropdown-item" href="/divisions/Toy">Toys</a></li>
 
                               </ul>
                           </li> 
-                          <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/mycart">My Cart</a></li>
+                          {{#ifeq activepage "mycart"}}
+                          <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/mycart" status="active" style="color:#fed136">My Cart</a></li>
+                          {{else}}
+                          <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/mycart">My Cart</a></li>
+                          {{/ifeq}}
                          {{/ifeq}}
 
                         {{#ifeq usertype "customer"}}
                            <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/#trending_products">Trending</a></li>
                           <li class="nav-item dropdown">
+                            {{#ifeq activepage "divisions"}}
+                            <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false" status="active" style="color:#fed136">
+                               Divisions
+                            </a>
+                            {{else}}
                             <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                Divisions
                             </a>
+                            {{/ifeq}}
                               <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#">Electronics</a></li>  
-                                <li><a class="dropdown-item" href="#">Toys</a></li>
+                                <li><a class="dropdown-item" href="/divisions/Electronic">Electronics</a></li>  
+                                <li><a class="dropdown-item" href="/divisions/Toy">Toys</a></li>
 
                               </ul>
                           </li> 
                           {{#ifeq activepage "profile"}}
-                            <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/customer/get_profile">My Profile</a></li>
+                            <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/customer/get_profile" status="active" style="color:#fed136">My Profile</a></li>
                           {{else}}
                             <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/customer/get_profile">My Profile</a></li>
                           {{/ifeq}}
                           {{#ifeq activepage "mycart"}}
-                            <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/mycart">My Cart</a></li>
+                          <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/mycart" status="active" style="color:#fed136">My Cart</a></li>
                           {{else}}
-                            <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/mycart">My Cart</a></li>
+                          <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/mycart">My Cart</a></li>
+                          {{/ifeq}}
+                          {{#ifeq activepage "cartHistory"}}
+                          <li class="nav-item"><a class="nav-link js-scroll-trigger active" href="/cartHistory" status="active" style="color:#fed136">Cart History</a></li>
+                          {{else}}
+                          <li class="nav-item"><a class="nav-link js-scroll-trigger" href="/cartHistory">Cart History</a></li>
                           {{/ifeq}}
                         {{/ifeq}}
 
                         {{#ifeq usertype "Warehouse officer"}}
                           <li class="nav-item">
+                            {{#ifeq activepage "add_new_item"}}
+                            <a class="nav-link js-scroll-trigger" href="/warehouse_officer/add_new_item" status="active" style="color:#fed136">Add new Item</a>
+                            {{else}}
                             <a class="nav-link js-scroll-trigger" href="/warehouse_officer/add_new_item" >Add new Item</a>
+                            {{/ifeq}}
                           </li>
 
                           <li class="nav-item">
+                            {{#ifeq activepage "update_item_count"}}
+                            <a class="nav-link js-scroll-trigger" href="/warehouse_officer/update_item_count" status="active" style="color:#fed136">Update Item</a>
+                            {{else}}
                             <a class="nav-link js-scroll-trigger" href="/warehouse_officer/update_item_count">Update Item</a>
+                            {{/ifeq}}
                           </li>
 
                           <li class="nav-item">
+                            {{#ifeq activepage "orders"}}
+                            <a class="nav-link js-scroll-trigger" href="/warehouse_officer/order" status="active" style="color:#fed136">Order</a>
+                            {{else}}
                             <a class="nav-link js-scroll-trigger" href="/warehouse_officer/order">Order</a>
+                            {{/ifeq}}
                           </li>
                           
                         {{/ifeq}}
 
                          {{#ifeq usertype "admin"}}
                           <li class="nav-item">
+                            {{#ifeq activepage "add_employee"}}
+                            <a  class="nav-link js-scroll-trigger" href="/admin/add_employee" status="active" style="color:#fed136">Add Employee</a>
+                            {{else}}
                             <a  class="nav-link js-scroll-trigger" href="/admin/add_employee">Add Employee</a>
+                            {{/ifeq}}
                           </li>
                           
                           {{/ifeq}}
 
                           {{#ifeq usertype "Sales manager"}}
                           <li class="nav-item">
+                            {{#ifeq activepage "add_new_product"}}
+                            <a class="nav-link js-scroll-trigger" href="/sales_manager/add_new_product" status="active" style="color:#fed136">Add new Product</a>
+                            {{else}}
                             <a class="nav-link js-scroll-trigger" href="/sales_manager/add_new_product">Add new Product</a>
+                            {{/ifeq}}
                           </li>
 
                           <li class="nav-item">
+                            {{#ifeq activepage "reports"}}
+                            <a class="nav-link js-scroll-trigger" href="/sales_manager/report" status="active" style="color:#fed136">Reports</a>
+                            {{else}}
                             <a class="nav-link js-scroll-trigger" href="/sales_manager/report">Reports</a>
+                            {{/ifeq}}
                           </li>
                           
                           {{/ifeq}}
