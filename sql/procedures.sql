@@ -152,29 +152,29 @@ use c_center_db;
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `pickup_Order_Iteam`$$
 CREATE PROCEDURE `pickup_Order_Iteam`(
-    userType varchar(11),
-    customerId int(10),
-  state varchar(30) ,
-     pickupDate date ,
-  contactNumber varchar(11) ,
-  contactName varchar(50),
-  paymentMethod varchar(20)
+    user_Type varchar(11),
+    ci int(10),
+  state_order varchar(30) ,
+     pickup_Date date ,
+  contact_Number varchar(11) ,
+  contact_Name varchar(50),
+  payment_Method varchar(20)
     )
 BEGIN
 DECLARE idcart INT(10) DEFAULT 0;
     DECLARE order_id INT DEFAULT 0;
     START TRANSACTION;
-   IF (userType = "gust") THEN
-    select `cartId` INTO idcart from `guest cart` left outer join cart  using(cartId) where `guestId`=customerId and `state`='open' limit 1;
-   ELSEIF (userType ="customer") THEN
-       select `cartId` INTO idcart from  customercart left outer join cart  using(cartId) where `customerId`=customerId and `state`='open' limit 1;
+   IF (user_Type = "gust") THEN
+    select `cartId` INTO idcart from `guest cart` left outer join cart  using(cartId) where `guestId`=ci and `state`='open' limit 1;
+   ELSEIF (user_Type ="customer") THEN
+       select `cartId` INTO idcart from  customercart left outer join cart  using(cartId) where `customerId`=ci and `state`='open' limit 1;
 	end if;
    
-        INSERT INTO `order`(`cartId`, `delieveryMethod`, `state`) VALUES (idcart,'pickuporder',state);
+        INSERT INTO `order`(`cartId`, `delieveryMethod`, `state`) VALUES (idcart,'pickuporder',state_order);
         SET order_id = LAST_INSERT_ID();
-        INSERT INTO `pickuporder`(`orderId`, `pickupDate`, `contactNumber`, `contactName`) VALUES (order_id,pickupDate,contactNumber,contactName);
-INSERT INTO `payment`(`orderId`, `paymentMethod`) VALUES (order_id,paymentMethod);
-UPDATE `cart` SET `dateOfPurchase`=curdate(),`state`='close' WHERE `cartId`=CartId;
+        INSERT INTO `pickuporder`(`orderId`, `pickupDate`, `contactNumber`, `contactName`) VALUES (order_id,pickup_Date,contact_Number,contact_Name);
+INSERT INTO `payment`(`orderId`, `paymentMethod`) VALUES (order_id,payment_Method);
+UPDATE `cart` SET `dateOfPurchase`=curdate(),`state`='close' WHERE `cartId`=idcart limit 1;
 UPDATE item s
 JOIN (
    select itemId as itemId , COUNT(itemId) as itemC from cartAddition where cartId=idcart group by itemId
@@ -187,34 +187,34 @@ DELIMITER ;
 DELIMITER $$
 DROP PROCEDURE IF EXISTS `delievery_Order_Iteam`$$
 CREATE PROCEDURE `delievery_Order_Iteam`(
-    userType varchar(11),
-    customerId int(10),
-  state varchar(30) ,
-     delieveryAddress varchar(50)	 ,
-  city	varchar(20)	 ,
-  contactNumber	varchar(11)	,
-  contactName	varchar(50)	,
-  paymentMethod varchar(20)
+    user_Type varchar(11),
+    ci int(10),
+  state_order varchar(30) ,
+     delievery_Address varchar(50)	 ,
+  city_order	varchar(20)	 ,
+  contact_Number	varchar(11)	,
+  contact_Name	varchar(50)	,
+  payment_Method varchar(20)
     )
 BEGIN
     DECLARE order_id INT DEFAULT 0;
     DECLARE numofItem INT DEFAULT 0;
      DECLARE i INT(8) DEFAULT 0;
-     DECLARE idcart INT(10) DEFAULT 4;
+     DECLARE idcart INT(10) DEFAULT 0;
     DECLARE ItemQuantity INT(5) DEFAULT 0;
      DECLARE isMainCity INT(5) DEFAULT 0;
-     DECLARE delieveryEstimate date ;
+     DECLARE delievery_Estimate date ;
     START TRANSACTION;
-    IF (userType = "gust") THEN
-    select `cartId` INTO idcart from `guest cart`left outer join cart using(cartId) where `guestId`=customerId and `state`='open' limit 1;
-   ELSEIF (userType ="customer") THEN
-       select `cartId` INTO idcart from  customercart left outer join cart using(cartId) where `customerId`=customerId and `state`='open' limit 1;
+    IF (user_Type = "guest") THEN
+    select `cartId` INTO idcart from `guest cart`left outer join cart using(cartId) where `guestId`=ci and `state`='open' limit 1;
+   ELSEIF (user_Type ="customer") THEN
+       select `cartId` INTO idcart from  customercart left outer join cart using(cartId) where `customerId`=ci and `state`='open' limit 1;
 	end if;
      
-        INSERT INTO `order`(`cartId`, `delieveryMethod`, `state`) VALUES (idcart,'delieveryorder',state);
+        INSERT INTO `order`(`cartId`, `delieveryMethod`, `state`) VALUES (idcart,'delieveryorder',state_order);
         SET order_id = LAST_INSERT_ID();
         
-INSERT INTO `payment`(`orderId`, `paymentMethod`) VALUES (order_id,paymentMethod);
+INSERT INTO `payment`(`orderId`, `paymentMethod`) VALUES (order_id,payment_Method);
 UPDATE `cart` SET `dateOfPurchase`=curdate(),`state`='close'  WHERE `cartId`=idcart;
 UPDATE item s
 JOIN (
@@ -222,21 +222,21 @@ JOIN (
 ) vals ON s.itemId = vals.itemId
 SET itemCount =itemCount- itemC;
  select min(itemCount) into ItemQuantity from cart inner join cartAddition using(cartId) inner join item using(itemId);
- select count(cityName) into isMainCity from maincity where cityName=city;
+ select count(cityName) into isMainCity from maincity where cityName=city_order;
 IF (isMainCity>0) THEN
 	IF (0<ItemQuantity) THEN
-    set delieveryEstimate=ADDDATE(curdate(), 5);
+    set delievery_Estimate=ADDDATE(curdate(), 5);
     else
-    set delieveryEstimate=ADDDATE(curdate(), 8);
+    set delievery_Estimate=ADDDATE(curdate(), 8);
 	END IF;
 ELSEIF (isMainCity<0) THEN
 	IF (0<ItemQuantity) THEN
-    set delieveryEstimate=ADDDATE(curdate(), 7);
+    set delievery_Estimate=ADDDATE(curdate(), 7);
     else
-    set delieveryEstimate=ADDDATE(curdate(), 10);
+    set delievery_Estimate=ADDDATE(curdate(), 10);
 	END IF;
 END IF;    
-INSERT INTO `delieveryorder`(`orderId`, `delieveryAddress`, `city`, `contactNumber`, `contactName`, `delieveryEstimate`) VALUES (order_id,delieveryAddress,city,contactNumber,contactName,delieveryEstimate);
+INSERT INTO `delieveryorder`(`orderId`, `delieveryAddress`, `city`, `contactNumber`, `contactName`, `delieveryEstimate`) VALUES (order_id,delievery_Address,city_order,contact_Number,contact_Name,delievery_Estimate);
 COMMIT;
 END$$
 DELIMITER ;
