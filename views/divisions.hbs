@@ -113,7 +113,7 @@
                         document.getElementById('subCategoryNavigation').innerHTML = '<h6>Select a Sub-category :</h6>';
                         for(i=0; i<data.subCategories.length; i++){
                             document.getElementById('subCategoryNavigation').innerHTML += 
-                            "<button onclick=\"getSubCatProd("+data.subCategories[i].subCatId+")\"class=\"subCatButton\" id=\""+data.subCategories[i].subCatId+"\">"+data.subCategories[i].subCatName+"</button>";
+                            "<button onclick=\"getSubCatProd("+data.subCategories[i].subCatId+","+catId+")\"class=\"subCatButton\" id=\""+data.subCategories[i].subCatId+"\">"+data.subCategories[i].subCatName+"</button>";
                         }
                         document.getElementById('productRows').innerHTML = ''
                         for(i=0; i<data.cat_products.length; i++){
@@ -139,13 +139,15 @@
 
             //////////////////////////////////////////////////
 
-            function getSubCatProd(id){
+            function getSubCatProd(id,catId){
+                //console.log(catId);
                 $.ajax({ 
                     url: '/user/subCategoryProd',
                     type: 'POST',
                     cache: false, 
                     data: {
-                        'id': id
+                        'id': id,
+                        'catId' : catId
                     }, 
                     success: function(data){
                         var subCatBtn = document.getElementsByClassName('subCatButton');
