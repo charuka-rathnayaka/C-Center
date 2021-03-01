@@ -245,3 +245,27 @@ END$$
 
 DELIMITER ;
 
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `add_to_cart`$$
+
+CREATE PROCEDURE `add_to_cart`(
+    
+    cartId INT(10),
+    itemId INT(15),
+    quantity INT)
+
+BEGIN
+    DECLARE i INT(8) DEFAULT 0;
+    START TRANSACTION;
+        
+        REPEAT SET i = i + 1;
+        INSERT INTO `cartaddition`( `cartId`, `itemId`, `dateOfAddition`) VALUES (cartId,itemId,(SELECT CURRENT_DATE()));
+        UNTIL i > quantity
+        END REPEAT;
+        
+    COMMIT;
+END$$
+
+DELIMITER ;
+

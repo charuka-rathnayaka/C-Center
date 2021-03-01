@@ -130,9 +130,7 @@ class User {
       async addToCart(cartId,quantity,itemId){
         var result = await _database
           .get(this)
-          .select_query(
-          
-            'INSERT INTO `cartaddition`( `cartId`, `itemId`, `amount`, `dateOfAddition`) VALUES (?,?,?,(SELECT CURRENT_DATE()))',
+          .call_procedure("add_to_cart",
             [cartId,itemId,quantity]
 
           );
