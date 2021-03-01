@@ -842,6 +842,127 @@ exports.sentToCart = async(req,res)=>{
     
 }
 
+exports.get_div_details=async (req,res)=>{
+    const divName = req.url.substring(11,);
+    const categoriesOfDiv = await user.get_categories(divName);
+    if(categoriesOfDiv.connectionError==true){
+        console.log(error);
+        res.render('error',{code:"500",message:"Server is down."});
+        return;
+    }
+    else{
+        var i;
+        var result_len=categoriesOfDiv.result.length;
+        var cats = [];
+        for(i=0;i<result_len;i++) {
+            var cat={};
+            cat.id=categoriesOfDiv.result[i].categoryId;
+            cat.name=categoriesOfDiv.result[i].categoryName;
+            cats.push(cat);
+        }
+        let categories = cats;
+        var divisionPageResult = {};
+        divisionPageResult.thisDivision = req.url.substring(11,)+'s';
+        divisionPageResult.categories = categories;        
+        //console.log(divisionPageResult);       
+        //res.locals.categories=categories;
+        res.locals.divisionPageResult=divisionPageResult;
+    }
+
+
+    // const trending_products_result = await user.get_trending_products();
+    const division_products_result = await user.get_division_products(divName);
+    if(division_products_result.connectionError==true){
+        console.log(error);
+        res.render('error',{code:"500",message:"Server is down."});
+        return;
+    }
+    else{
+        var j;
+        let div_products = [];
+        for(j=0;j<division_products_result.result.length;j++) {
+            if(j<=division_products_result.result.length){
+                var prod={};
+                prod.id=division_products_result.result[j].productId;
+                prod.name=division_products_result.result[j].productName;
+                prod.desc=division_products_result.result[j].description;
+                prod.image=division_products_result.result[j].photoLink;
+                div_products.push(prod);
+            } 
+        }
+        res.locals.div_products=div_products;
+    }
+    res.render('divisions');
+}
+
+exports.getSubCategories=async (req,res)=>{
+    const subCatsOfCat = await user.get_sub_categories(req.body.id);
+    const category_products_result = await user.get_category_products(req.body.id);
+    if(subCatsOfCat.connectionError==true){
+        console.log(error);
+        res.render('error',{code:"500",message:"Server is down."});
+        return;
+    }else if(category_products_result.connectionError==true){
+        console.log(error);
+        res.render('error',{code:"500",message:"Server is down."});
+        return;
+    }
+    else{
+        var i;
+        var result_len=subCatsOfCat.result.length;
+        var subCats = [];
+        for(i=0;i<result_len;i++) {
+            var subCat={};
+            subCat.subCatId=subCatsOfCat.result[i].subCategoryId;
+            subCat.subCatName=subCatsOfCat.result[i].subCategoryName;
+            subCats.push(subCat);
+        }
+        let subCategories = subCats;
+        var j;
+        let cat_products = [];
+        for(j=0;j<category_products_result.result.length;j++) {
+            if(j<=category_products_result.result.length){
+                var prod={};
+                prod.id=category_products_result.result[j].productId;
+                prod.name=category_products_result.result[j].productName;
+                prod.desc=category_products_result.result[j].description;
+                prod.image=category_products_result.result[j].photoLink;
+                cat_products.push(prod);
+            }
+        }
+        resultOfThis={};
+        resultOfThis.subCategories=subCategories;
+        resultOfThis.cat_products=cat_products;
+        res.status(200).send(resultOfThis);
+    }
+}
+
+exports.getSubCategoryProducts=async (req,res)=>{
+    const sub_category_products_result = await user.get_sub_category_products(req.body.id,req.body.catId);
+    if(sub_category_products_result.connectionError==true){
+        console.log(error);
+        res.render('error',{code:"500",message:"Server is down."});
+        return;
+    }
+    else{
+        var j;
+        let sub_cat_products = [];
+        for(j=0;j<sub_category_products_result.result.length;j++) {
+            if(j<=sub_category_products_result.result.length){
+                var prod={};
+                prod.id=sub_category_products_result.result[j].productId;
+                prod.name=sub_category_products_result.result[j].productName;
+                prod.desc=sub_category_products_result.result[j].description;
+                prod.image=sub_category_products_result.result[j].photoLink;
+                sub_cat_products.push(prod);
+            }
+        }
+        resultOfThis2={};
+        resultOfThis2.sub_cat_products=sub_cat_products;
+        res.status(200).send(resultOfThis2);
+    }
+}
+
     
     
 

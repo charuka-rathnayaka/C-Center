@@ -10510,3 +10510,67 @@ section#contact form#contactForm :-ms-input-placeholder {
   margin: auto;
   display: block;
 }
+
+.catButton{
+  background-color: white;
+  border: 3px solid black;
+  color: black;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 5px 5px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 20px;
+  outline: none;
+}
+
+
+
+.catButton:hover {
+  background-color: #fecf36;
+  color: black;
+}
+
+.catButton:focus{
+  outline: none;
+}
+
+.subCatButton{
+  background-color: white;
+  border: 3px solid black;
+  color: black;
+  padding: 5px 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 5px 5px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  border-radius: 20px;
+  outline: none;
+}
+
+
+
+.subCatButton:hover {
+  background-color: #fecf36;
+  color: black;
+}
+
+.activeNow{
+  background-color: #fecf36;
+}
+
+.subCatButton:focus{
+  outline: none;
+}
+
+.catNavBar{
+  margin-left: 20px;
+}

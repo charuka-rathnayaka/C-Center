@@ -65,6 +65,101 @@ class User {
           resolve(obj);
         });
       }
+    
+     //Function to get product data of a division to front end
+       async get_division_products(divName) {
+        var result = await _database
+          .get(this)
+          .select_query(
+             
+            'SELECT DISTINCT `product`.`productId`,`product`.productName, `product`.`description`, `product`.`photoLink` FROM `product` NATURAL JOIN `productdivisiondetail` NATURAL JOIN `division` WHERE `division`.`divisionName`="'+divName+'"'  
+          );
+       
+        return new Promise((resolve) => {
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          };
+          result.error ? (obj.error = true) : (obj.result = result.result);
+          resolve(obj);
+        });
+      }
+
+       //Function to get product data of a category to front end
+       async get_category_products(id) {
+        var result = await _database
+          .get(this)
+          .select_query(
+             
+            'SELECT DISTINCT `product`.`productId`,`product`.productName, `product`.`description`, `product`.`photoLink` FROM `product` NATURAL JOIN `productcategorydetail` NATURAL JOIN `category` WHERE `category`.`categoryId`='+id  
+          );
+       
+        return new Promise((resolve) => {
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          };
+          result.error ? (obj.error = true) : (obj.result = result.result);
+          resolve(obj);
+        });
+      }
+
+      //Function to get product data of a sub-category to front end
+      async get_sub_category_products(id,catId) {
+        var result = await _database
+          .get(this)
+          .select_query(
+             
+            'SELECT DISTINCT `product`.`productId`,`product`.productName, `product`.`description`, `product`.`photoLink` FROM `product` NATURAL JOIN `productsubcategorydetail` NATURAL JOIN `subcategory` NATURAL JOIN `productcategorydetail` NATURAL JOIN `category` WHERE `category`.`categoryId`='+catId+' AND `subcategory`.`subCategoryId`='+id 
+          );
+       
+        return new Promise((resolve) => {
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          };
+          result.error ? (obj.error = true) : (obj.result = result.result);
+          resolve(obj);
+        });
+      }
+
+
+      //function to get the categories of a division
+      async get_categories(divName) {
+        var result = await _database
+          .get(this)
+          .select_query(
+            'SELECT `category`.`categoryId`, `category`.`categoryName` From `category` NATURAL JOIN `divisioncategorydetail` NATURAL JOIN `division` WHERE `division`.`divisionName`="'+divName+'"'
+            
+           
+          );
+       
+        return new Promise((resolve) => {
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          };
+          result.error ? (obj.error = true) : (obj.result = result.result);
+          resolve(obj);
+        });
+      }
+
+      //function to get the sub categories of a category
+      async get_sub_categories(id) {
+        //console.log('id came to this as '+ id);
+        var result = await _database
+          .get(this)
+          .select_query(
+            'SELECT `subCategory`.`subCategoryId`, `subCategory`.`subCategoryName` From `subCategory` NATURAL JOIN `subcategorydetail` NATURAL JOIN `category` WHERE `category`.`categoryId`='+id
+            
+           
+          );
+       
+        return new Promise((resolve) => {
+          let obj = {
+            connectionError: _database.get(this).connectionError,
+          };
+          result.error ? (obj.error = true) : (obj.result = result.result);
+          resolve(obj);
+        });
+      }
+
 
         //function for the middlewware getting user basic data through token
       async get_user(email) {
