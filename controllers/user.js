@@ -485,7 +485,7 @@ exports.pickupOrder =async (req, res) => {
 }
 exports.delieveryorder = async (req, res) => { 
     const { contactname, contactnumber, city, address, payment } = req.body;
-    const order = await user.delieveryOrderIteam(contactname, contactnumber, address, city, address, req.res.locals.Id, req.res.locals.usertype);
+    const order = await user.delieveryOrderIteam(contactname, contactnumber, address, city, payment, req.res.locals.Id, req.res.locals.usertype);
     if (order.connectionError == true) {
         // console.log(error);
         res.render('error', { code: "500", message: "Server is down." });
