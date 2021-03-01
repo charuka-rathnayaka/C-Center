@@ -770,7 +770,7 @@ exports.sentToCart = async(req,res)=>{
                 //check whether guest have a cart
                 const existance=await guest.checkCart(decodedToken.guest_id);
                 console.log(existance);
-                console.log("done");
+                
                 if(existance.connectionError==true || existance.error==true){
                     if (existance.error) throw error;
                     console.log(error);
@@ -802,9 +802,9 @@ exports.sentToCart = async(req,res)=>{
                                 var cartId =cartIdInfo.result[0].cartid;
                                 
                                 //add to the cartaddition table
-                                console.log("C");
+                                
                                 const addition = await user.addToCart(cartId,quantity.quantity,itemID);
-                                console.log("H");
+                                
                                 if(addition.connectionError==true){
                                     console.log(error);
                                     res.render('error',{code:"500",message:"Server is down."});
