@@ -938,7 +938,7 @@ exports.getSubCategories=async (req,res)=>{
 }
 
 exports.getSubCategoryProducts=async (req,res)=>{
-    const sub_category_products_result = await user.get_sub_category_products(req.body.id);
+    const sub_category_products_result = await user.get_sub_category_products(req.body.id,req.body.catId);
     if(sub_category_products_result.connectionError==true){
         console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
