@@ -11,7 +11,10 @@ router.get('/login',(req,res)=>{
     res.render('login');
 });
 
-
+router.get('/divisions/Electronic',userController.get_div_details);
+router.get('/divisions/Toy',userController.get_div_details);
+router.post('/user/subCategories',userController.getSubCategories);
+router.post('/user/subCategoryProd',userController.getSubCategoryProducts);
 router.get('/info/:product_id',userController.getDetails);
 
 router.post('/cart/:itemID',userController.sentToCart);
