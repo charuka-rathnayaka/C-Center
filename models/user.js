@@ -103,12 +103,12 @@ class User {
       }
 
       //Function to get product data of a sub-category to front end
-      async get_sub_category_products(id) {
+      async get_sub_category_products(id,catId) {
         var result = await _database
           .get(this)
           .select_query(
              
-            'SELECT DISTINCT `product`.`productId`,`product`.productName, `product`.`description`, `product`.`photoLink` FROM `product` NATURAL JOIN `productsubcategorydetail` NATURAL JOIN `subcategory` WHERE `subcategory`.`subCategoryId`='+id  
+            'SELECT DISTINCT `product`.`productId`,`product`.productName, `product`.`description`, `product`.`photoLink` FROM `product` NATURAL JOIN `productsubcategorydetail` NATURAL JOIN `subcategory` NATURAL JOIN `productcategorydetail` NATURAL JOIN `category` WHERE `category`.`categoryId`='+catId+' AND `subcategory`.`subCategoryId`='+id 
           );
        
         return new Promise((resolve) => {
