@@ -231,4 +231,19 @@ nav{
     background-color: rgb(70, 68, 67);
     color: rgb(87, 83, 80);
   }
+  .dropdown-item.active, .dropdown-item:active {
+    color: #fed136;
+    text-decoration: none;
+    background-color: #fed136;
+  }
+  .navbar-dark .navbar-nav .nav-link.active {
+    color: rgb(245, 230, 21);
+  }
+
+  #mainNav .navbar-nav .nav-item .nav-link.active, #mainNav .navbar-nav .nav-item .nav-link:hover {
+    color: #fed136;
+  }
   
+  .nav-link.active{
+    color: #fed136;
+  }

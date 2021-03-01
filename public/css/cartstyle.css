@@ -1,0 +1,102 @@
+.cardimg{
+    width: 100px;
+    height: 100px;
+}
+
+.carddes{
+    position: relative;
+    left: 120px;
+    top: -100px;
+    /*background-color: brown;*/
+    width: 500px;
+    height: 200px;
+}
+
+.cardbg{
+    /*background-color: cornflowerblue;*/
+    width: 800px;
+    height: 200px;
+}
+
+.cardinnerbox{
+    /*background-color: blanchedalmond;*/
+    width: 100px;
+    height: 150px;
+    text-align: right;
+    
+}
+
+.cardvaluebox{
+    position: relative;
+    left: 105px;
+    top: -150px;
+    /*background-color: blue;*/
+    width: 80px;
+    height: 150px;
+}
+
+.pricetag{
+    /*background-color: white;*/
+    position: relative;
+    left: 250px;
+    top: -280px;
+    width: 150px;
+    height: 50px;
+}
+
+.cardlink{
+    /*background-color: teal;*/
+    position: relative;
+    left: 400px;
+    top: -280px;
+    width: 150px;
+    height: 50px;
+}
+
+.cardcheckout{
+    /*background-color: blue;*/
+    position: fixed;
+    top: 150px;
+    left: auto;
+    right: 0px;
+    bottom: 10px;
+    width: 500px;
+    height: 900px;
+}
+
+.block {
+    display: block;
+    width: 100%;
+    border: none;
+    background-color:dodgerblue;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+.total{
+    /*background-color: teal;*/
+    width: 150px;
+    height: 30px;
+    
+}
+.subtotal{
+    position: relative;
+    /*background-color: rgb(255, 231, 231);*/
+    width: 100px;
+    height: 30px;
+    left: 370px;
+    top: -30px;
+}
+
+.qntity{
+    position: relative;
+    width: 100px;
+    height: 100px;
+    /*background-color:coral;*/
+    top: -410px;
+    left: 500px;
+}

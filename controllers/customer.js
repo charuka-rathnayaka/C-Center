@@ -35,7 +35,7 @@ exports.get_profile=(req,res)=>{
                 else{  
                     let date = JSON.stringify(customer_profile.result[0].dateOfBirth);
                     let bdate = date.slice(1,11);
-                    let user_profile={lastname:customer_profile.result[0].lastName,firstname:customer_profile.result[0].firstName, email:customer_profile.result[0].email, address:customer_profile.result[0].address, city:customer_profile.result[0].city,birthday:bdate, contactnumber:customer_profile.result[0].contactNumber};
+                    let user_profile={lastname:customer_profile.result[0].lastName,firstname:customer_profile.result[0].firstName, email:customer_profile.result[0].email, address:customer_profile.result[0].address, city:customer_profile.result[0].cityName,birthday:bdate, contactnumber:customer_profile.result[0].contactNumber};
                     res.locals.user_profile=user_profile;
                     res.locals.activepage="profile";
                     res.render('myprofile');
@@ -55,7 +55,7 @@ exports.get_profile=(req,res)=>{
 
 
 exports.register= async (req,res)=>{
-    //console.log(req.body);
+    //console.log("In reg control",req.body);
     
     const {firstname,lastname,email,address,city,birthday,contactnumber,password1,password2}=req.body;
     const user_register_check = await customer.register_check(email);
@@ -83,6 +83,11 @@ exports.register= async (req,res)=>{
         const user_register_check = await customer.register_insert(firstname,lastname,email,address,city,birthday,contactnumber,password1);
         if(user_register_check.connectionError==true){
             console.log("connection error");
+            res.render('error',{code:"500",message:"Server is down."});
+            return;
+        }
+        else if(user_register_check.error==true){
+            console.log("Undefined Server Error");
             res.render('error',{code:"500",message:"Server is down."});
             return;
         }

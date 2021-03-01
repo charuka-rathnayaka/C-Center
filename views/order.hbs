@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+
+    <link rel="icon" type="image/x-icon" href="/assets/img/fast_cart.png" />
+    <link rel="stylesheet" href='/css/othernavstyles.css'>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href='/css/footerstyles.css'>
+    <link rel="stylesheet" href='/css/cartstyle.css'>
+    <title>My Cart</title>
+</head>
+
+<body>
+
+    {{> navigation }}
+    <div class="container mt-4">
+        <div class="jumbotron">
+            <h1 class="display-4">My Cart</h1>
+            <h2>{{totalcount}} products in the cart</h2>
+            <table>
+                <tbody>
+                    {{#each data}}
+                    <tr>
+                        <td>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="cardbg">
+                                        <div class="cardimg">
+                                            <img src="/product_images/{{this.photoLink}}" width="100px" height="100px">
+                                        </div>
+                                        <div class="carddes">
+                                            <div class="card-title">
+                                                <font style="font-size: larger;"><b>{{this.productName}}</b></font>
+                                            </div>
+                                            <div class="cardinnerbox">
+                                                {{#each this.attribute}}
+                                                {{this}}:
+                                                <br>
+                                                {{/each}}
+                                            </div>
+                                            <div class="cardvaluebox">
+                                                {{#each this.value}}
+                                                {{this}}<br>
+                                                {{/each}}
+                                            </div>
+                                            <div class="pricetag">
+                                                <font style="font-size: large;"><b>LKR: {{this.price}}</b></font>
+                                            </div>
+
+                                            <div class="cardlink">
+                                                <a
+                                                    href="mycart/remove?name={{this.productName}}&id={{this.itemId}}&cartId={{this.cartId}}">Remove</a>
+                                            </div>
+                                            <div class="qntity">
+                                                <form id="myform" action="">
+                                                    <input type="number" class="size-12" id="qn" value={{this.count}}
+                                                        min="0" max="10" step="1"
+                                                        onchange=update(this.value,{{this.price}},{{this.cartId}},{{this.itemId}})>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+            {{#ifeq subtotal 0}}
+            {{else}}
+            <div class="cardcheckout">
+
+            </div>
+            {{/ifeq}}
+        </div>
+    </div>
+
+
+    <div class="cardcheckout">
+        <div class="card">
+            <div class="card-body">
+                <br>
+                <div class="total">Items({{totalcount}})</div>
+                <div class="subtotal">LKR. {{subtotal}}</div>
+            </div>
+            <div class="card-footer text-muted">
+                <div class="total">Subtotal</div>
+                <div class="subtotal">LKR. {{subtotal}}</div>
+            </div>
+        </div>
+        <form class="needs-validation" action="/order" method="POST">
+            <label for="validationCustom04" class="form-label">Delivary Method</label>
+            <select class="form-select" id="validationCustom04" name='delieveryMethod' required
+                value={{details.delieveryMethod}} disabled="true">
+                <option selected disabled value="">Choose...</option>
+                <option value='Pickup'>Pickup</option>
+                <option value='Delievery'>Delievery</option>
+
+            </select>
+            <div class="invalid-feedback">
+                Please select the Delivary method.
+            </div>
+            <button class="btn btn-primary" type="submit"> Next </button>
+        </form>
+    </div>
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Third party plugin JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <!-- Contact form JS-->
+    <script src="assets/mail/jqBootstrapValidation.js"></script>
+    <script src="assets/mail/contact_me.js"></script>
+    <!-- Core theme JS-->
+    <script src="/js/scripts.js"></script>
+
+
+    <br><br><br><br>
+    {{>footer}}
+</body>
+
+</html>
+
+<script>
+    function update(value, price, cartId, itemId) {
+        $.ajax({
+            type: "POST",
+            url: "/mycart/json",
+            data: JSON.stringify({
+                value: value,
+                price: price,
+                cartId: cartId,
+                itemId: itemId,
+            }),
+            dataType: 'json',
+            contentType: 'application/json'
+        });
+        document.getElementById("myform").submit();
+    }
+        //document.getElementById("amount").innerHTML="hello";
+
+</script>

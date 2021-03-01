@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="icon" type="image/x-icon" href="/assets/img/fast_cart.png" />
+    <script src="http://code.jquery.com/jquery-1.6.2.min.js"></script> 
+     <link rel="stylesheet" href='/css/othernavstyles.css'>
+     <link rel="stylesheet" href='/css/footerstyles.css'>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
+    
+    <title>UPDATE Order</title>
+</head>
+<body>
+     
+   {{> navigation }}
+   <br>
+     <div class="container mt-4">
+        <form  method="POST">
+            <div class="mb-3">
+                <div class="form-group">
+                   
+                    <div class="row">
+                        <div class="col-3"></div>
+                        <div class="col-6">
+                            <input class="form-control" list="datalistOptions" id="orderId" placeholder="Enter Order Id to get Order......" name='year'>
+                            <datalist id="datalistOptions">
+                                    {{#each open_orders}}
+                                        <option value= {{this.orderId}}>
+
+                                     {{/each}}
+                            </datalist>
+
+                        </div>
+                        
+                            <div class="col-3">
+                                
+                            <button type="submit" class="btn btn-primary btn" formaction="" id="get_report">Get Report</button>
+                            </div>
+                    </div>
+                    
+                     <div class="row">
+                        <div class="col-3"></div>
+                    <div class="col-6">
+                        <span  id='orderid_message_id' style="color: red;">
+                        
+                        </span>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+            </form>
+    </div>
+<br><br>
+<div class="container" style="border:0.5px solid #7c4747">
+             <div class="row justify-content-md-center" style="font-size:30px" id="quarter_heading">Open Orders</div>
+             <br>
+    <table class="table table-hover" id='orders_table'>
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Order ID</th>
+            <th scope="col">Cart ID</th>
+            <th scope="col">Delievery Method</th>
+            <th scope="col">Purchase date</th>
+            <th scope="col">Order State</th>
+             <th scope="col"></th>
+          
+           
+            
+          </tr>
+        </thead>
+        <tbody id='orders_body'>
+
+            {{#each open_orders}}
+                <tr>
+                    <td> {{this.orderId}}</td>
+                    <td> {{this.cartId}}</td>
+                    <td> {{this.delieveryMethod}}</td>
+                    <td> {{this.dateOfPurchase}}</td>
+                    <td> {{this.state}}</td>
+                    <td> <a class="btn btn-primary" href="/warehouse_officer/order/{{this.orderId}}" role="button">View Details</a></td>
+                </tr>
+            {{/each}}
+        </tbody>
+        </table>
+        <br><br>
+            <div class="row">
+                    <div class="col-5"></div>
+                    <div class="col-6">
+                        <span  id='orders_table_id' style="color: red;"></span>
+                        </div></div>
+        </div><br><br>
+    {{>footer}}
+    <script>
+         $('#get_report').click(function(e){  
+                e.preventDefault();
+                var orderId = $("#orderId").val();
+               $("#orderid_message_id").empty();
+                $("#orders_table_id").empty();
+                if(orderId.length<1){
+                    $('#orderid_message_id').html("Please Enter Order Id to Search.");
+                }
+                else{
+                      $("#orders_table tbody").empty();
+                     $.ajax({ 
+                    url: '/warehouse_officer/get_order',
+                    type: 'POST',
+                    cache: false, 
+                    data: {
+                        'orderId': orderId,
+                        
+                    }, 
+                    success: function(data){
+                        console.log("data",data);
+                        if(data.length>0){
+                                var newRowContent="<tr>";
+                                newRowContent+="<td style='color:rgb(100, 38, 38);text-align:center'>"+data[0]["orderId"]+"</td>";
+                                newRowContent+="<td>"+data[0]["cartId"]+"</td>";
+                                newRowContent+="<td>" +data[0]["delieveryMethod"]+ "</td>";
+                                newRowContent+='<td>'+data[0]["dateOfPurchase"] +'</td>';
+                                newRowContent+='<td>'+data[0]["state"]+'</td>';
+                                newRowContent+='<td>'+
+                                    '<a class="btn btn-primary" href="/warehouse_officer/order/'+data[0]["orderId"]+'" role="button">View Details</a>'
+                                    +'</td>';
+                                newRowContent+="</tr>";
+
+                                 jQuery("#orders_table tbody").append(newRowContent);
+
+                        }
+                        else{
+                             $('#orders_table_id').html("No Order details for the Order ID.");
+                        }
+
+                    }
+                     });
+
+                }
+         });
+    </script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Third party plugin JS-->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <!-- Contact form JS-->
+        <script src="assets/mail/jqBootstrapValidation.js"></script>
+        <script src="assets/mail/contact_me.js"></script>
+        <!-- Core theme JS-->
+        <script src="/js/scripts.js"></script>
+        
+</body>
+
+
+
+
+
+
+
+
+
+</script>
+
+</html>

@@ -61,8 +61,9 @@ app.use("/warehouse_officer",require("./routes/warehouse_officer"));
 
 
 //if undefined url is called error page renderd
-app.get('*', function(req, res){
-    res.render('error',{code:"404",message:"Page Not Found"});
+app.get('/*', (req, res)=>{
+    //console.log("page not found");
+    res.status(400).render('error',{code:"404",message:"Page Not Found"});
   });
 
 
