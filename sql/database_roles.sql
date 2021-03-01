@@ -41,11 +41,13 @@ GRANT SELECT ON `c_center_db`.`cartaddition` TO 'user_role';
 GRANT SELECT ON `c_center_db`.`item` TO 'user_role';
 GRANT SELECT ON `c_center_db`.`itemdetail` TO 'user_role';
 GRANT SELECT ON `c_center_db`.`attribute` TO 'user_role';
+
 GRANT SELECT ON `c_center_db`.`customercart` TO 'user_role';
 GRANT SELECT ON `c_center_db`.`cart` TO 'user_role';
 GRANT DELETE ON `c_center_db`.`cartaddition` TO 'user_role';
 GRANT INSERT ON `c_center_db`.`cartaddition` TO 'user_role';
 GRANT SELECT ON `c_center_db`.`guest cart` TO 'user_role';
+GRANT EXECUTE ON PROCEDURE `c_center_db`.`add_to_cart` TO 'user_role';
 
 
 

@@ -48,11 +48,12 @@ class Guest {
     }
    
     async checkCart(id){
+    
       var result = await _database
         .get(this)
         .select_query(
-          'SELECT MAX(cartId) AS cartid FROM `guest cart`NATURAL JOIN `cart` WHERE guestId=? AND state="open"',
-          [id]
+          'SELECT MAX(`cartId`) AS cartid FROM `guest cart`NATURAL JOIN `cart` WHERE guestId=? AND state="open";',
+          [id]          
         );
       
         
