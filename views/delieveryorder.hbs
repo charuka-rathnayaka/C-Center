@@ -21,10 +21,6 @@
 
     {{> navigation }}
 
-
-
-
-
     <div class="container mt-4">
         <div class="card">
             <div class="card-header">
@@ -34,7 +30,7 @@
                 <form class="needs-validation" action="/order/delieveryorder" method="POST">
                     <div class="col-md-5">
                         <label for="validationCustom01" class="form-label">Contact name</label>
-                        <input type="text" class="form-control" id="validationCustom01" name='firstname' required
+                        <input type="text" class="form-control" id="validationCustom01" name='contactname' required
                             value={{user_profile.contactname}}>
                         <div class="valid-feedback">
                             Looks good!

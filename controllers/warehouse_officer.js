@@ -12,7 +12,8 @@ exports.get_attribute_details=async (req,res)=>{
         return;
     }
     else {
-        res.locals.attributes=JSON.stringify(attribute_details.result);       
+        res.locals.attributes=JSON.stringify(attribute_details.result);
+        res.locals.activepage="add_new_item";    
         res.render('add_new_item',{ message: req.flash('success') });
     }
 }
@@ -77,7 +78,8 @@ exports.add_new_item=async(req,res)=>{
     }
     else {
     
-        res.locals.open_orders=(open_orders.result);       
+        res.locals.open_orders=(open_orders.result);
+        res.locals.activepage="orders";        
         res.status(200).render('orders');
     }
  }

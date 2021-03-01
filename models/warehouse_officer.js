@@ -188,7 +188,7 @@ class WarehouseOfficer {
               var result = await _database
                 .get(this)
                 .select_query(
-                  "UPDATE `order` SET `state`='Close' WHERE `orderId`=?;",
+                  "UPDATE `order` SET `state`='close' WHERE `orderId`=?;",
                   [orderId]
                   
                 );

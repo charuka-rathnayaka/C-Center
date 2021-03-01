@@ -39,7 +39,8 @@ const checkuser=async (req,res,next)=>{
                 let user=user_type_check.result[0].firstName;
                 let useremail=user_type_check.result[0].email;
                 let usertype=user_type_check.result[0].role;
-                let userId=user_type_check.result[0].Id;
+                let userId=user_type_check.result[0].Id
+                ;
                 res.locals.user=user;
                 res.locals.usertype=usertype;
                 res.locals.useremail=useremail;

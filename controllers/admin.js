@@ -10,6 +10,11 @@ exports.add_employee=async (req,res)=>{
    // console.log(employee_register_check);
     if(employee_register_check.error==true){
         console.log("connection error");
+        res.render('error',{code:"500",message:"Undefined Error. Server is down."});
+        return;
+    }
+    if(employee_register_check.connectionError==true){
+        console.log("connection error");
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }

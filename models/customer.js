@@ -86,13 +86,14 @@ class Customer {
           resolve(obj);
         });
       }
-      async createCart(email){
+      async createCart(Id){
         
         var result = await _database
           .get(this)
           .call_procedure("create_cart_customer",
-            [email]
+            [Id]
           );
+          
           
           
           return new Promise((resolve,reject)=>{
@@ -108,12 +109,12 @@ class Customer {
                 
       }
      
-      async checkCart(email){
+      async checkCart(Id){
         var result = await _database
           .get(this)
           .select_query(
-            'SELECT MAX(cartId) AS cartid FROM ` customercart` NATURAL JOIN `cart` WHERE email=? AND state="open"',
-            [email]
+            'SELECT MAX(cartId) AS cartid FROM `customercart` NATURAL JOIN `cart` WHERE customerId=? AND state="open"',
+            [Id]
           );
           
           return new Promise((resolve) => {
@@ -124,13 +125,13 @@ class Customer {
             resolve(obj);
           });
       }
-      async getCartId(email){
+      async getCartId(Id){
         
         var result=await _database
         .get(this)
         .select_query(
-          'SELECT max(cartId) AS cartid FROM customercart WHERE email=?  ',
-          [email]
+          'SELECT max(cartId) AS cartid FROM customercart WHERE customerId=?  ',
+          [Id]
         );
         
         return new Promise((resolve,reject)=>{

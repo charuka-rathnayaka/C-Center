@@ -243,26 +243,44 @@ class User {
       }
       
 
-  async orderIteams(ContactName, contactnumber,pickupdate,payment,Cart_ID) {
+  async orderIteams(ContactName, contactnumber, pickupdate, payment, custermer_id,usertype) {
+    console.log(ContactName, contactnumber, pickupdate, payment, custermer_id, usertype);
     var result = await _database
     .get(this)
     .select_query(
-            'CALL pickup_Order_Iteam(?,?,?,?,?,?)',
-            [Cart_ID,"notDelivered",pickupdate,contactnumber,ContactName,payment]   
+            'CALL pickup_Order_Iteam(?,?,?,?,?,?,?)',
+      [usertype,custermer_id,"open",pickupdate,contactnumber,ContactName,payment]   
           );
-      console.log(ContactName, contactnumber,pickupdate,payment);
+   
      return new Promise((resolve) => {
           
           let obj = {
             connectionError: _database.get(this).connectionError,
           };
           result.error ? (obj.error = true) : (obj.result = result.result);
-         
+       console.log(result);
           resolve(obj);
         });
   }
- 
+  async delieveryOrderIteam(ContactName, contactnumber, delieveryAddress, city, payment, custermer_id, usertype) {
+    console.log(ContactName, contactnumber, delieveryAddress, city, payment, custermer_id, usertype);
+    var result = await _database
+      .get(this)
+      .select_query(
+        'CALL delievery_Order_Iteam(?,?,?,?,?,?,?,?)',
+        [usertype,custermer_id, "open", delieveryAddress, city, contactnumber, ContactName, payment]
+      );
+    
+    return new Promise((resolve) => {
 
+      let obj = {
+        connectionError: _database.get(this).connectionError,
+      };
+      result.error ? (obj.error = true) : (obj.result = result.result);
+      console.log(result);
+      resolve(obj);
+    });
+  }
 
 }
 

@@ -12,7 +12,6 @@ const customer = new Customer();
 const guest = new Guest();
 
 
-
 exports.login=async (req,res)=>{  
         const email=req.body.email;
         const password=req.body.password;
@@ -69,7 +68,7 @@ exports.get_home_details=async (req,res,next)=>{
     const new_products_result = await user.get_new_products();
     //console.log(new_products_result.result);
     if(new_products_result.connectionError==true){
-        console.log(error);
+       // console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }
@@ -91,7 +90,7 @@ exports.get_home_details=async (req,res,next)=>{
     const trending_products_result = await user.get_trending_products();
     //console.log("lengtth",trending_products_result.result);
     if(trending_products_result.connectionError==true){
-        console.log(error);
+        //console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }
@@ -110,7 +109,6 @@ exports.get_home_details=async (req,res,next)=>{
             res.locals.trend_products = trend_products;
             
         }
-           // console.log("lengtth",trend_products);
                     
     }
     res.locals.activepage="home";
@@ -192,15 +190,57 @@ exports.getCartAdditionList= async(req,res)=>{
                 res.render('order', { data: arr, subtotal: subtotal, totalcount: totalcount });
             }
             else if (req.url == "/order/delieveryorder") {
-                 res.locals= { data: arr, subtotal: subtotal, totalcount: totalcount };
-                autofillDelievery(req,res);
+                if (req.res.locals.usertype == "customer") {
+                console.log(req.res.locals.useremail);
+                const customer_profile = await customer.get_customer_profile(req.res.locals.useremail);
+                console.log(customer_profile);
+                if (customer_profile.connectionError == true) {
+                    res.locals.user_profile = null;
+                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+
+                }
+                else {
+
+                    //console.log(customer_profile);
+                    let user_profile = { contactname: customer_profile.result[0].firstName, firstname: customer_profile.result[0].firstName, email: customer_profile.result[0].email, address: customer_profile.result[0].address, city: customer_profile.result[0].city, contactnumber: customer_profile.result[0].contactNumber };
+                    res.locals.user_profile = user_profile;
+                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                    console.log(res.locals.usertype);
+
+                }
+                }
+                else {
+                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                }
             }
             else if (req.url == "/order/pickuporder") { 
-                res.locals= { data: arr, subtotal: subtotal, totalcount: totalcount };
-                autofillPickup(req,res);
+               // res.locals= { data: arr, subtotal: subtotal, totalcount: totalcount };
+                if (req.res.locals.usertype == "customer") {
+                    console.log(req.res.locals.useremail);
+                    const customer_profile = await customer.get_customer_profile(req.res.locals.useremail);
+                    console.log(customer_profile);
+                    if (customer_profile.connectionError == true) {
+                        res.locals.user_profile = null;
+                        res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+
+                    }
+                    else {
+
+                        //console.log(customer_profile);
+                        let user_profile = { contactname: customer_profile.result[0].firstName, firstname: customer_profile.result[0].firstName, email: customer_profile.result[0].email, address: customer_profile.result[0].address, city: customer_profile.result[0].city, contactnumber: customer_profile.result[0].contactNumber };
+                        res.locals.user_profile = user_profile;
+                        res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                        console.log(res.locals.usertype);
+
+                    }
+                }
+                else {
+                    res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount }); 
+                }
             }
             else {
-                 res.render('mycart', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                res.locals.activepage="mycart";
+                res.render('mycart', { data: arr, subtotal: subtotal, totalcount: totalcount });
                
             }
           
@@ -295,6 +335,7 @@ exports.getCartHistory= async(req,res)=>{
             lst.push(obj);
         }
         //console.log(lst);
+        res.locals.activepage="cartHistory";
         res.render('cartHistory',{data:lst});
     }
 }
@@ -354,59 +395,31 @@ exports.gettype =async (req, res) => {
 
     }
 }
-autofillPickup=async (req, res) => { 
-     const token=req.cookies.jwt;
-    
-    if(token){
-        jwt.verify(token,process.env.JWT_SECRET,async (err,decodedToken)=>{
-        
-            if(err){
-               console.log(error);
-               res.locals.user_profile=null;
-               res.render('pickuporder');
-                return;
-            }
-            else if(decodedToken.usertype!='customer'){
-               console.log(error);
-                res.locals.user_profile=null;
-                res.render('pickuporder');
-                return;
-            
-               
-            }else{
-                //console.log(decodedToken);
-                var email=decodedToken.email;
-                const customer_profile = await customer.get_customer_profile(email);
-                //console.log(customer_profile);
-                if(customer_profile.connectionError==true){
-                   res.locals.user_profile=null;
-                    res.render('pickuporder');
-                    return;
-                }
-                else{  
-                    let date = JSON.stringify(customer_profile.result[0].dateOfBirth);
-                    let bdate = date.slice(1,11);
-                    let user_profile={contactname:customer_profile.result[0].lastName,firstname:customer_profile.result[0].firstName, email:customer_profile.result[0].email, address:customer_profile.result[0].address, city:customer_profile.result[0].city,birthday:bdate, contactnumber:customer_profile.result[0].contactNumber};
-                    res.locals.user_profile=user_profile;
-                    res.render('pickuporder');
-                    
-                    return;
-                }
-                
-              
-            }
-        })
-    }else{
-       res.locals.user_profile=null;
-       res.render('pickuporder');
-        return;
+autofillPickup = async (req, res) => { 
+    console.log(req.locals.useremail);
+    const customer_profile = await customer.get_customer_profile(req.locals.useremail);
+    console.log(customer_profile);
+    if (customer_profile.connectionError == true) {
+        res.locals.user_profile = null;
+        res.render('delieveryorder');
+
+    }
+    else {
+
+       //console.log(customer_profile);
+        let user_profile = { contactname: customer_profile.result[0].firstName, firstname: customer_profile.result[0].firstName, email: customer_profile.result[0].email, address: customer_profile.result[0].address, city: customer_profile.result[0].city,contactnumber: customer_profile.result[0].contactNumber };
+        res.locals.user_profile = user_profile;
+        res.render('delieveryorder');
+        console.log(res.locals.usertype);
+
     }
     
+   
 }
 
 autofillDelievery=async (req, res) => { 
        const token=req.cookies.jwt;
-    
+   
     if(token){
         jwt.verify(token,process.env.JWT_SECRET,async (err,decodedToken)=>{
         
@@ -420,10 +433,12 @@ autofillDelievery=async (req, res) => {
                console.log(error);
                 res.locals.user_profile=null;
                  res.render('delieveryorder');
-                return;
-            
                
-            }else{
+              
+               
+            }  
+            else{
+                
                 //console.log(decodedToken);
                 var email=decodedToken.email;
                 const customer_profile = await customer.get_customer_profile(email);
@@ -431,16 +446,17 @@ autofillDelievery=async (req, res) => {
                 if(customer_profile.connectionError==true){
                    res.locals.user_profile=null;
                     res.render('delieveryorder');
-                    return;
+                   
                 }
                 else{  
+                    
                     let date = JSON.stringify(customer_profile.result[0].dateOfBirth);
                     let bdate = date.slice(1,11);
                     let user_profile={contactname:customer_profile.result[0].lastName,firstname:customer_profile.result[0].firstName, email:customer_profile.result[0].email, address:customer_profile.result[0].address, city:customer_profile.result[0].city,birthday:bdate, contactnumber:customer_profile.result[0].contactNumber};
                     res.locals.user_profile=user_profile;
-                     res.render('delieveryorder');
-                    
-                    return;
+                    res.render('delieveryorder');
+                    console.log(res.locals.usertype);  
+                   
                 }
                 
               
@@ -449,27 +465,36 @@ autofillDelievery=async (req, res) => {
     }else{
        res.locals.user_profile=null;
        res.render('delieveryorder');
-        return;
+       
     }
 }
 
 exports.pickupOrder =async (req, res) => { 
-    const { ContactName, contactnumber, pickupdate, payment } = req.body;
-    const order = await user.orderIteams(ContactName, contactnumber, pickupdate, payment, 1);
+    const { contactname, contactnumber, pickupdate, payment } = req.body;
+    const order = await user.orderIteams(contactname, contactnumber, pickupdate, payment, req.res.locals.Id, req.res.locals.usertype);
     if (order.connectionError == true) {
-        console.log(error);
+       // console.log(error);
         res.render('error', { code: "500", message: "Server is down." });
         return;
     }
     else {
         console.log(order);
-         res.redirect("/mycart");
+        res.redirect("/carthistory");
     }
      
 }
-exports.delieveryorder= (req, res) => { 
-    console.log(req.body);
-       res.redirect("/mycart");
+exports.delieveryorder = async (req, res) => { 
+    const { contactname, contactnumber, city, address, payment } = req.body;
+    const order = await user.delieveryOrderIteam(contactname, contactnumber, address, city, address, req.res.locals.Id, req.res.locals.usertype);
+    if (order.connectionError == true) {
+        // console.log(error);
+        res.render('error', { code: "500", message: "Server is down." });
+        return;
+    }
+    else {
+        console.log(order);
+        res.redirect("/carthistory");
+    }
 }
 
 
@@ -562,7 +587,7 @@ exports.getDetails=async (req,res)=>{
     const productDetails = await user.showInformation(product_id);
 
     if(productDetails.connectionError==true){
-        console.log(error);
+       // console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }
@@ -630,7 +655,7 @@ exports.getItemDetails=async (req,res)=>{
     const itemDetails = await user.showItemInformation(item_id);
 
     if(itemDetails.connectionError==true||itemDetails.error==true){
-        console.log(error);
+       // console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }
@@ -649,14 +674,20 @@ exports.getItemDetails=async (req,res)=>{
                 items.push(datum.itemId,[],datum.productName,datum.description,datum.photoLink);
             }
             
-            items[1].push([datum.attributeName,datum.value]);
+            if (datum.attributeName=="Price"){
+                items.push(datum.value);
+            }else{
+                items[1].push([datum.attributeName,datum.value]);
+            }
+            
                
         }
-
+        
         
         //send data to front end
         return res.status(200).render('addition',{
             items:items,
+        
         });
     }catch(error){
         console.log(error.message);
@@ -688,32 +719,35 @@ exports.sentToCart = async(req,res)=>{
             
             else if(decodedToken.usertype=='customer'){
                 //check whether customer have a cart
-                const existance=await customer.checkCart(decodedToken.email);
+                const customerID=req.res.locals.Id;
+                
+                const existance=await customer.checkCart(customerID);
                 
 
                 if(existance.connectionError==true || existance.error==true){
-                    console.log(error);
+                  //  console.log(error);
                     res.render('error',{code:"500",message:"Server is down."});
                     return;
                 
                 }
                 else{
                     //If customer doesn't have a open cart, then create a cart
-                    if (existance.result.length==0){
-                        const creation=await customer.createCart(decodedToken.email);
+                    if (existance.result[0].cartid==null){
+                        
+                        const creation=await customer.createCart(customerID);
                         
                         if(creation.connectionError==true || creation.error==true){
-                            console.log(error);
+                          //  console.log(error);
                             res.render('error',{code:"500",message:"Server is down."});
                             return;
                         }
                         else{
                             //get created cart id
-                            const cartIdInfo=await customer.getCartId(decodedToken.email);
+                            const cartIdInfo=await customer.getCartId(customerID);
                             var cartId =cartIdInfo.result[0].cartid;
                     
                             if (cartIdInfo.connectionError==true || cartIdInfo.error==true){
-                                console.log(error);
+                             //   console.log(error);
                                 res.render('error',{code:"500",message:"Server is down."});
                                 return;
                             }else{
@@ -722,7 +756,7 @@ exports.sentToCart = async(req,res)=>{
                                 const addition = await user.addToCart(cartId,quantity.quantity,itemID);
                                 
                                 if(addition.connectionError==true){
-                                    console.log(error);
+                                  //  console.log(error);
                                     res.render('error',{code:"500",message:"Server is down."});
                                     return;
                                 }
@@ -740,7 +774,7 @@ exports.sentToCart = async(req,res)=>{
                         const addition = await user.addToCart(cartId,quantity.quantity,itemID);
                         
                         if(addition.connectionError==true){
-                            console.log(error);
+                           // console.log(error);
                             res.render('error',{code:"500",message:"Server is down."});
                             return;
                         }
@@ -759,7 +793,7 @@ exports.sentToCart = async(req,res)=>{
     }
     else if (guest_token){
         jwt.verify(guest_token,process.env.JWT_SECRET,async (err,decodedToken)=>{
-            console.log(decodedToken.guest_id);
+            
             if(err){
                 console.log(err);
                 res.render('error',{code:"500",message:"Server is down!"});
@@ -769,11 +803,10 @@ exports.sentToCart = async(req,res)=>{
             else {
                 //check whether guest have a cart
                 const existance=await guest.checkCart(decodedToken.guest_id);
-                console.log(existance);
-                console.log("done");
+                
                 if(existance.connectionError==true || existance.error==true){
-                    if (existance.error) throw error;
-                    console.log(error);
+                  
+                  //  console.log(error);
                     res.render('error',{code:"500",message:"Server is down."});
                     return;
                 
@@ -785,7 +818,7 @@ exports.sentToCart = async(req,res)=>{
                         const creation=await guest.createCart(decodedToken.guest_id);
                         
                         if(creation.connectionError==true || creation.error==true){
-                            console.log(error);
+                         //   console.log(error);
                             res.render('error',{code:"500",message:"Server is down."});
                             return;
                         }
@@ -795,16 +828,16 @@ exports.sentToCart = async(req,res)=>{
                             
                     
                             if (cartIdInfo.connectionError==true || cartIdInfo.error==true){
-                                console.log(error);
+                              //  console.log(error);
                                 res.render('error',{code:"500",message:"Server is down."});
                                 return;
                             }else{
                                 var cartId =cartIdInfo.result[0].cartid;
                                 
                                 //add to the cartaddition table
-                                console.log("C");
+                                
                                 const addition = await user.addToCart(cartId,quantity.quantity,itemID);
-                                console.log("H");
+                               
                                 if(addition.connectionError==true){
                                     console.log(error);
                                     res.render('error',{code:"500",message:"Server is down."});
@@ -824,7 +857,7 @@ exports.sentToCart = async(req,res)=>{
                         const addition = await user.addToCart(cartId,quantity.quantity,itemID);
                         
                         if(addition.connectionError==true){
-                            console.log(error);
+                          //  console.log(error);
                             res.render('error',{code:"500",message:"Server is down."});
                             return;
                         }
@@ -846,7 +879,7 @@ exports.get_div_details=async (req,res)=>{
     const divName = req.url.substring(11,);
     const categoriesOfDiv = await user.get_categories(divName);
     if(categoriesOfDiv.connectionError==true){
-        console.log(error);
+       // console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }
@@ -873,7 +906,7 @@ exports.get_div_details=async (req,res)=>{
     // const trending_products_result = await user.get_trending_products();
     const division_products_result = await user.get_division_products(divName);
     if(division_products_result.connectionError==true){
-        console.log(error);
+      //  console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }
@@ -892,6 +925,7 @@ exports.get_div_details=async (req,res)=>{
         }
         res.locals.div_products=div_products;
     }
+    res.locals.activepage="divisions";
     res.render('divisions');
 }
 
@@ -899,7 +933,7 @@ exports.getSubCategories=async (req,res)=>{
     const subCatsOfCat = await user.get_sub_categories(req.body.id);
     const category_products_result = await user.get_category_products(req.body.id);
     if(subCatsOfCat.connectionError==true){
-        console.log(error);
+       // console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }else if(category_products_result.connectionError==true){
@@ -940,7 +974,7 @@ exports.getSubCategories=async (req,res)=>{
 exports.getSubCategoryProducts=async (req,res)=>{
     const sub_category_products_result = await user.get_sub_category_products(req.body.id,req.body.catId);
     if(sub_category_products_result.connectionError==true){
-        console.log(error);
+        //console.log(error);
         res.render('error',{code:"500",message:"Server is down."});
         return;
     }

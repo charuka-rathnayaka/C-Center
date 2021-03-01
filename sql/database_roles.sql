@@ -62,12 +62,16 @@ GRANT INSERT ON `c_center_db`.`customer` TO 'customer_role';
 GRANT SELECT ON `c_center_db`.`maincity` TO 'customer_role';
 GRANT SELECT ON `c_center_db`.`cart` TO 'customer_role';
 GRANT SELECT ON `c_center_db`.`customercart` TO 'customer_role';
+GRANT INSERT ON `c_center_db`.`cart` TO 'customer_role';
+GRANT INSERT ON `c_center_db`.`customercart` TO 'customer_role';
 GRANT EXECUTE ON PROCEDURE `c_center_db`.`create_cart_customer` TO 'customer_role';
 
 
 GRANT INSERT ON `c_center_db`.`guest` TO 'guest_role';
 GRANT INSERT ON `c_center_db`.`cart` TO 'guest_role';
 GRANT INSERT ON `c_center_db`.`guest cart` TO 'guest_role';
+GRANT SELECT ON `c_center_db`.`guest cart` TO 'guest_role';
+GRANT SELECT ON `c_center_db`.`cart` TO 'guest_role';
 GRANT EXECUTE ON PROCEDURE `c_center_db`.`create_cart_guest` TO 'guest_role';
 
 
