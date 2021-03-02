@@ -25,6 +25,11 @@
                 <tr>
                     <th scope="col">CartId: {{this.cartId}}</th>
                     <th scope="col">Purchase Date: {{this.dateOfPurchase}}</th>
+                    {{#ifeq this.delieveryEstimate null}}
+                    <th scope="col">pickup Date: {{this.pickupDate}}</th>
+                    {{else}}
+                    <th scope="col">delievery Estimate: {{this.delieveryEstimate}}</th>
+                    {{/ifeq}}
                     <th scope="col">Items: {{this.count}}</th>
                     <th scope="col">Amount: LKR. {{this.amount}}</th>
                     <th scope="col"><button class="btn btn-secondary" id="myBtn" onclick="myFunction({{this.count}},{{this.cartId}})">Show Details</button></th>    
@@ -63,7 +68,7 @@
             contentType: 'application/json',
             
             success: function(data){
-                console.log(data);
+                //console.log(data);
                 if(data){
                     var i;
                     var newRowContent= "<div class='card'>"+"<h5 class='card-title'>Cart Details</h5>"+"<table class='table table-striped'>";

@@ -1,5 +1,4 @@
 const nodemailer = require("nodemailer");
-const config = require("config");
 const _transporter = new WeakMap();
 
 class Email {
@@ -7,10 +6,10 @@ class Email {
     _transporter.set(
       this,
       nodemailer.createTransport({
-        host: "smtp.gmail.com",
+        host: 'smtp.gmail.com',
         auth:{
           user:process.env.email,
-          pass:process.env.email_password
+          pass:process.env.emailpassword
         }
         }
       )
@@ -18,10 +17,11 @@ class Email {
   }
 
   send(to, subject, text, HtmlContent) {
+      console.log(process.env.email,process.env.emailpassword);
     return new Promise((resolve) => {
       _transporter.get(this).sendMail(
         {
-          from: `"C Center" `,
+          from: "C Center",
           to: to,
           subject: subject,
           text: text,

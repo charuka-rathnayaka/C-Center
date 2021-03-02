@@ -58,8 +58,8 @@ router.get('/order/pickuporder/remove',authorization.isGuestOrCustomerRole,jsonP
 },userController.getCartAdditionListjson);
 
 router.post('/order',authorization.isGuestOrCustomerRole,userController.gettype);
-router.post('/order/delieveryorder',authorization.isGuestOrCustomerRole, userController.delieveryorder);
-router.post('/order/pickuporder',authorization.isGuestOrCustomerRole, userController.pickupOrder);
+router.post('/order/delieveryorder',authorization.isGuestOrCustomerRole, userController.send_email_confirmation,userController.delieveryorder);
+router.post('/order/pickuporder',authorization.isGuestOrCustomerRole, userController.send_email_confirmation, userController.pickupOrder);
 
 router.post('/order/pickuporder/json',authorization.isGuestOrCustomerRole,jsonParser,async function (req, res, next) {
      

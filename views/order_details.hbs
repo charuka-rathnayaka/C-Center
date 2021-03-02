@@ -83,8 +83,13 @@
         <br><br>
         <div class="row justify-content-md-center">
                     <div class="col text-center" >
+                      {{#ifeq state "open"}}
                         <button id="order_button" class="btn btn-primary btn-block text-uppercase" onclick="location.href='/warehouse_officer/order_confirm/{{this.orderId}}'" type="button">
                         Confirm Order</button>
+                      {{else}}
+                         <button id="order_button" class="btn btn-primary btn-block text-uppercase"  type="button" disabled>
+                        Order Already Confirmed</button>
+                      {{/ifeq}}
 
                     
                     </div>
@@ -112,13 +117,13 @@
         <!-- Core theme JS-->
         <script src="/js/scripts.js"></script> 
 
-<script>
+<script>/*
     var state="{{state}}";
     if(state=="close"){
         $('#order_button').attr('disabled',true);
        
 
-    }
+    }*/
     //console.log("state",state);
 
 </script>
