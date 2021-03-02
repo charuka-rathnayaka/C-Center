@@ -31,10 +31,12 @@
             </div>
             <div class="col-sm-8">
                 <h2>{{items.[2]}}</h2>
-                <h5>{{#each items.[1] as |attribute|}}
-                    {{attribute.[0]}}:{{attribute.[1]}}<br>
-                    {{/each}}</h5>
+                <p>{{#each items.[1] as |attribute|}}
+                    {{attribute.[0]}} : {{attribute.[1]}}<br>
+                    {{/each}}</p>
+                <p><strong>Price : {{items.[5]}}</strong></p>
                 <p>{{items.[3]}}</p>
+                
                 <form action="/cart/{{items.[0]}}" method="POST">
                     <label for="quantity">Quantity:</label>
                     <input type="number" id="quantity" name="quantity" min="1" value="1">

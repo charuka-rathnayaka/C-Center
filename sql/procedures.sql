@@ -164,7 +164,7 @@ BEGIN
 DECLARE idcart INT(10) DEFAULT 0;
     DECLARE order_id INT DEFAULT 0;
     START TRANSACTION;
-   IF (user_Type = "gust") THEN
+   IF (user_Type = "Guest") THEN
     select `cartId` INTO idcart from `guest cart` left outer join cart  using(cartId) where `guestId`=ci and `state`='open' limit 1;
    ELSEIF (user_Type ="customer") THEN
        select `cartId` INTO idcart from  customercart left outer join cart  using(cartId) where `customerId`=ci and `state`='open' limit 1;
@@ -205,7 +205,7 @@ BEGIN
      DECLARE isMainCity INT(5) DEFAULT 0;
      DECLARE delievery_Estimate date ;
     START TRANSACTION;
-    IF (user_Type = "guest") THEN
+    IF (user_Type = "Guest") THEN
     select `cartId` INTO idcart from `guest cart`left outer join cart using(cartId) where `guestId`=ci and `state`='open' limit 1;
    ELSEIF (user_Type ="customer") THEN
        select `cartId` INTO idcart from  customercart left outer join cart using(cartId) where `customerId`=ci and `state`='open' limit 1;
@@ -221,8 +221,13 @@ JOIN (
    select itemId as itemId , COUNT(itemId) as itemC from cartAddition where cartId=idcart group by itemId
 ) vals ON s.itemId = vals.itemId
 SET itemCount =itemCount- itemC;
- select min(itemCount) into ItemQuantity from cart inner join cartAddition using(cartId) inner join item using(itemId);
- select count(cityName) into isMainCity from maincity where cityName=city_order;
+ select min(itemCount) into ItemQuantity from cart inner join cartAddition using(cartId) inner join item using(itemId) where cart.cartId=idcart;
+
+ IF (city_order="Other") THEN
+    set isMainCity=-1;
+ else
+     select count(cityName) into isMainCity from maincity where cityName=city_order;
+END IF;
 IF (isMainCity>0) THEN
 	IF (0<ItemQuantity) THEN
     set delievery_Estimate=ADDDATE(curdate(), 5);
@@ -231,9 +236,9 @@ IF (isMainCity>0) THEN
 	END IF;
 ELSEIF (isMainCity<0) THEN
 	IF (0<ItemQuantity) THEN
-    set delievery_Estimate=ADDDATE(curdate(), 7);
+    set delievery_Estimate=ADDDATE(curdate(), 8);
     else
-    set delievery_Estimate=ADDDATE(curdate(), 10);
+    set delievery_Estimate=ADDDATE(curdate(), 11);
 	END IF;
 END IF;    
 INSERT INTO `delieveryorder`(`orderId`, `delieveryAddress`, `city`, `contactNumber`, `contactName`, `delieveryEstimate`) VALUES (order_id,delievery_Address,city_order,contact_Number,contact_Name,delievery_Estimate);
@@ -252,8 +257,8 @@ DROP PROCEDURE IF EXISTS `Update_cart_iteam`$$
 CREATE PROCEDURE `Update_cart_iteam`(
     
     Item_ID int(15),
-	cartId int(10),
-    Value int(100)) 
+	cart_Id int(10),
+    v int(100)) 
 BEGIN
     
     DECLARE ItemQuantity INT(5) DEFAULT 0;
@@ -261,17 +266,17 @@ BEGIN
     START TRANSACTION;
         
         
-        select count(itemId) INTO ItemQuantity from cartAddition where itemId=Item_ID and cartId=cartId limit 1;
-        SET ItemQuantity=ItemQuantity-Value;
+        select count(itemId) INTO ItemQuantity from cartAddition where itemId=Item_ID and cartId=cart_Id limit 1;
+        SET ItemQuantity=ItemQuantity-v;
         IF (0>ItemQuantity) THEN
         
             REPEAT SET i = i + 1;
-            insert into cartAddition(cartId,itemId,dateOfAddition) values(cartId,Item_ID,curdate());
+            insert into cartAddition(cartId,itemId,dateOfAddition) values(cart_Id,Item_ID,curdate());
             UNTIL i >= -ItemQuantity
         END REPEAT;
         ELSE
         IF (0<ItemQuantity) THEN
-            delete from cartAddition where itemId=Item_ID and cartId=cartId order by dateOfAddition desc limit ItemQuantity;
+            delete from cartAddition where itemId=Item_ID and cartId=cart_Id order by dateOfAddition desc limit ItemQuantity;
                 END IF;
         
        END IF;

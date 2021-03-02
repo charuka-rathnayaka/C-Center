@@ -1,4 +1,3 @@
-
 //const mysql=require("mysql");
 const jwt=require("jsonwebtoken");
 const bcrypt=require("bcryptjs");
@@ -6,6 +5,7 @@ var multer  = require('multer');
 const User = require("../models/user");
 const Customer = require("../models/customer");
 const Guest = require("../models/guest");
+const Email = require("../utils/email");
 const user = new User();
 const {Cart,CustomerCart,GuestCart}= require("../models/cart");
 const url = require('url');
@@ -60,6 +60,7 @@ exports.login=async (req,res)=>{
 
 exports.logout=(req,res)=>{
     res.cookie("jwt",'',{maxAge:1});
+    res.cookie("guest_jwt",'',{maxAge:1});
     res.redirect('/');
 }
 
@@ -144,8 +145,14 @@ exports.getCartAdditionList= async(req,res)=>{
             return;
         }
         else{
-            console.log(carAdditiontList.result);
+            console.log(carAdditiontList);
             var itemList= carAdditiontList.result;
+            if(itemList.length>0){
+                cart_id=itemList[0].cartId;
+            }
+            else{
+                cart_id=0;
+            }
             var x=0;
             var subtotal=0;
             var arr=[];
@@ -191,13 +198,22 @@ exports.getCartAdditionList= async(req,res)=>{
                 res.render('order', { data: arr, subtotal: subtotal, totalcount: totalcount });
             }
             else if (req.url == "/order/delieveryorder") {
+                const city_details = await customer.get_cities();
+                if(city_details.connectionError==true){
+                    console.log("connection error");
+                    res.render('error',{code:"500",message:"Server is temporary down"});
+                 return;
+                }
+            else {
+                    const cities = city_details.result;
+               
                 if (req.res.locals.usertype == "customer") {
                 console.log(req.res.locals.useremail);
                 const customer_profile = await customer.get_customer_profile(req.res.locals.useremail);
                 console.log(customer_profile);
                 if (customer_profile.connectionError == true) {
                     res.locals.user_profile = null;
-                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount, cities: cities, cartId:cart_id});
 
                 }
                 else {
@@ -205,14 +221,15 @@ exports.getCartAdditionList= async(req,res)=>{
                     //console.log(customer_profile);
                     let user_profile = { contactname: customer_profile.result[0].firstName, firstname: customer_profile.result[0].firstName, email: customer_profile.result[0].email, address: customer_profile.result[0].address, city: customer_profile.result[0].city, contactnumber: customer_profile.result[0].contactNumber };
                     res.locals.user_profile = user_profile;
-                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount, cities: cities , cartId:cart_id});
                     console.log(res.locals.usertype);
 
                 }
                 }
                 else {
-                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                    res.render('delieveryorder', { data: arr, subtotal: subtotal, totalcount: totalcount, cities: cities, cartId:cart_id});
                 }
+            }
             }
             else if (req.url == "/order/pickuporder") { 
                // res.locals= { data: arr, subtotal: subtotal, totalcount: totalcount };
@@ -222,7 +239,7 @@ exports.getCartAdditionList= async(req,res)=>{
                     console.log(customer_profile);
                     if (customer_profile.connectionError == true) {
                         res.locals.user_profile = null;
-                        res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                        res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount , cartId:cart_id});
 
                     }
                     else {
@@ -230,18 +247,18 @@ exports.getCartAdditionList= async(req,res)=>{
                         //console.log(customer_profile);
                         let user_profile = { contactname: customer_profile.result[0].firstName, firstname: customer_profile.result[0].firstName, email: customer_profile.result[0].email, address: customer_profile.result[0].address, city: customer_profile.result[0].city, contactnumber: customer_profile.result[0].contactNumber };
                         res.locals.user_profile = user_profile;
-                        res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                        res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount , cartId:cart_id});
                         console.log(res.locals.usertype);
 
                     }
                 }
                 else {
-                    res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount }); 
+                    res.render('pickuporder', { data: arr, subtotal: subtotal, totalcount: totalcount , cartId:cart_id}); 
                 }
             }
             else {
                 res.locals.activepage="mycart";
-                res.render('mycart', { data: arr, subtotal: subtotal, totalcount: totalcount });
+                res.render('mycart', { data: arr, subtotal: subtotal, totalcount: totalcount , cartId:cart_id});
                
             }
           
@@ -299,7 +316,7 @@ exports.getCartHistory= async(req,res)=>{
             var amount=0;
             var cartId= carts[i].cartId;
             var count= carts[i].count;
-            var d= carts[i].dateOfPurchase;
+            var d = carts[i].dateOfPurchase;
             month = '' + (d.getMonth() + 1);
             day = '' + d.getDate();
             year = d.getFullYear();
@@ -309,7 +326,33 @@ exports.getCartHistory= async(req,res)=>{
             if (day.length < 2){ 
                 day = '0' + day;
             }
-            var dd= [year, month, day].join('-');
+            var dd = [year, month, day].join('-');
+            var da = carts[i].delieveryEstimate;
+            if (da != null) {
+                monthda = '' + (da.getMonth() + 1);
+                dayda = '' + da.getDate();
+                yearda = da.getFullYear();
+                if (monthda.length < 2) {
+                    monthda = '0' + monthda;
+                }
+                if (dayda.length < 2) {
+                    dayda = '0' + dayda;
+                }
+                var dda = [yearda, monthda, dayda].join('-');
+            }
+            var pd = carts[i].pickupDate;
+            if (pd != null) {
+                monthpd = '' + (pd.getMonth() + 1);
+                daypd = '' + pd.getDate();
+                yearpd = pd.getFullYear();
+                if (monthpd.length < 2) {
+                    monthpd = '0' + monthpd;
+                }
+                if (daypd.length < 2) {
+                    daypd = '0' + daypd;
+                }
+                var pda = [yearpd, monthpd, daypd].join('-');
+            }
             const itms= await cusCart.getItemHistory(req.res.locals.Id,cartId);
             if(itms.connectionError==true){
                 res.send('error',{code:"500",message:"server is down"});
@@ -332,7 +375,7 @@ exports.getCartHistory= async(req,res)=>{
                     }
                 }
             }
-            var obj={cartId:cartId,count:count,dateOfPurchase:dd,amount:amount};
+            var obj = { cartId: cartId, count: count, dateOfPurchase: dd, amount: amount, delieveryEstimate: dda, pickupDate:pda};
             lst.push(obj);
         }
         //console.log(lst);
@@ -471,30 +514,65 @@ autofillDelievery=async (req, res) => {
 }
 
 exports.pickupOrder =async (req, res) => { 
+    const today = new Date();
+    
     const { contactname, contactnumber, pickupdate, payment } = req.body;
-    const order = await user.orderIteams(contactname, contactnumber, pickupdate, payment, req.res.locals.Id, req.res.locals.usertype);
+    const date2 = new Date(pickupdate);
+    const diffTime = date2-today;
+    console.log(diffTime);
+    var id=0;
+    if (req.res.locals.usertype == "customer") {
+         id = req.res.locals.Id;
+    }
+    else {
+         id = req.res.locals.guest_num;
+    }
+    if (diffTime<0) { 
+        req.flash("error", "select valid pickupdate");
+        res.redirect("/order/pickuporder");
+        return;
+    }
+    const order = await user.orderIteams(contactname, contactnumber, pickupdate, payment, id, req.res.locals.usertype);
     if (order.connectionError == true) {
        // console.log(error);
         res.render('error', { code: "500", message: "Server is down." });
         return;
     }
     else {
-        console.log(order);
-        res.redirect("/carthistory");
+        //console.log(order);
+        if (req.res.locals.usertype == "customer") { 
+            res.redirect("/carthistory");
+        }
+        else{
+            res.redirect("/");
+        }
+        
     }
      
 }
 exports.delieveryorder = async (req, res) => { 
     const { contactname, contactnumber, city, address, payment } = req.body;
-    const order = await user.delieveryOrderIteam(contactname, contactnumber, address, city, payment, req.res.locals.Id, req.res.locals.usertype);
+    var id = 0;
+    if (req.res.locals.usertype == "customer") {
+        id = req.res.locals.Id;
+    }
+    else {
+        id = req.res.locals.guest_num;
+    }
+    const order = await user.delieveryOrderIteam(contactname, contactnumber, address, city, payment, id, req.res.locals.usertype);
     if (order.connectionError == true) {
         // console.log(error);
         res.render('error', { code: "500", message: "Server is down." });
         return;
     }
     else {
-        console.log(order);
-        res.redirect("/carthistory");
+        //console.log(order);
+        if (req.res.locals.usertype == "customer") {
+            res.redirect("/carthistory");
+        }
+        else {
+            res.redirect("/");
+        }
     }
 }
 
@@ -521,10 +599,16 @@ exports.getCartAdditionListjson= async(req,res)=>{
             return;
         }
         else{
-            //console.log(carAdditiontList);
+            console.log(carAdditiontList);
             var itemList= carAdditiontList.result;
             var x=0;
-            var subtotal=0;
+            var subtotal = 0;
+            if (itemList.length> 0) {
+                cart_id = itemList[0].cartId;
+            }
+            else {
+                cart_id = 0;
+            }
             var arr=[];
             var totalcount=0;
             while(x<itemList.length){    
@@ -566,10 +650,10 @@ exports.getCartAdditionListjson= async(req,res)=>{
            const itemcount = await cart.getItemCount(req.body.itemId, req.body.cartId);
             var val= itemcount.result[0].count;
             if (val == 0) {
-                res.status(200).send({ data: arr, subtotal: subtotal, totalcount: totalcount ,itemId:req.body.itemId });
+                res.status(200).send({ data: arr, subtotal: subtotal, totalcount: totalcount, itemId: req.body.itemId, cartId: cart_id });
             }
             else { 
-                res.status(200).send({ data: arr, subtotal: subtotal, totalcount: totalcount });
+                res.status(200).send({ data: arr, subtotal: subtotal, totalcount: totalcount, cartId: cart_id });
             }
             
            
@@ -678,12 +762,14 @@ exports.getItemDetails=async (req,res)=>{
             if (i==0){
                 items.push(datum.itemId,[],datum.productName,datum.description,datum.photoLink);
             }
-            
             if (datum.attributeName=="Price"){
                 items.push(datum.value);
             }else{
                 items[1].push([datum.attributeName,datum.value]);
             }
+            
+                
+            
             
                
         }
@@ -765,7 +851,7 @@ exports.sentToCart = async(req,res)=>{
                                     res.render('error',{code:"500",message:"Server is down."});
                                     return;
                                 }
-                                res.status(200).redirect('/');
+                                res.status(200).redirect('/mycart');
                                 return
                             }
                         }
@@ -783,7 +869,7 @@ exports.sentToCart = async(req,res)=>{
                             res.render('error',{code:"500",message:"Server is down."});
                             return;
                         }
-                        res.status(200).redirect('/');
+                        res.status(200).redirect('/mycart');
                         return
                         
                     
@@ -848,7 +934,7 @@ exports.sentToCart = async(req,res)=>{
                                     res.render('error',{code:"500",message:"Server is down."});
                                     return;
                                 }
-                                res.status(200).redirect('/');
+                                res.status(200).redirect('/mycart');
                                 return
                             }
                         }
@@ -866,7 +952,7 @@ exports.sentToCart = async(req,res)=>{
                             res.render('error',{code:"500",message:"Server is down."});
                             return;
                         }
-                        res.status(200).redirect('/');
+                        res.status(200).redirect('/mycart');
                         return
             
                     }
@@ -1000,4 +1086,68 @@ exports.getSubCategoryProducts=async (req,res)=>{
         resultOfThis2.sub_cat_products=sub_cat_products;
         res.status(200).send(resultOfThis2);
     }
+}
+
+exports.send_email_confirmation=async (req,res,next)=>{
+   // console.log("email confirm",req.body);
+    const email = new Email();
+    
+    var recepient=req.body.email_address;
+    
+    var subject="Payment Confirmation For the Order";
+    var htmlContent="<h2 style='color:black'>C Center</h2>";
+    htmlContent+="<p style='color:grey'> Thank you for your purchase! "+"</p>";
+    htmlContent+="<div class='card'>"+"<h3 class='card-title' style='color:green'>Payment Confirmation</h3>";
+    htmlContent+="<p>Contact Name: "+req.body["contactname"]+"</p>";
+    htmlContent+="<p>Payment: "+req.body["payment"]+"</p>";
+    htmlContent+="<p>Contact Number: "+req.body["contactnumber"]+"</p>";
+    htmlContent+="<p>Order ID: "+req.body["cartId"]+"</p>";
+    htmlContent+="<table class='table table-striped'><thead><tr><th style='font-size:17px;'>Item Id</th><th style='font-size:17px;'>Product Name</th><th style='font-size:17px;'>Quantitiy</th><th style='font-size:17px;'>Value</th></tr></thead>";
+    const order_details = await user.get_email_details(req.body.cartId);
+    if(order_details.connectionError==true){
+        console.log("connection ërror occured");
+        res.render('error',{code:"500",message:"Connection Error.Server is down."});
+        return;
+        
+    }
+    else if(order_details.error==true){
+        console.log("Insert error occured");
+        res.render('error',{code:"500",message:"Undefined Error Occured.Server is down."});
+        return;   
+    }
+    else {
+    //console.log("order details",order_details);
+    var payment=0;
+    htmlContent+="<tbody>";
+    for(var i=0;i<=order_details.result.length;i++){
+        //console.log(order_details.result[i]);
+        if (order_details.result[i]!=null){
+            payment+=parseInt(order_details.result[i]["value"]);
+            htmlContent+="<tr>";
+            htmlContent+="<td>"+order_details.result[i]["itemId"]+"</td>";
+            htmlContent+="<td>" +order_details.result[i]["productName"] + "</td>";
+            htmlContent+="<td>" +order_details.result[i]["quantity"] + "</td>";
+            htmlContent+='<td>'+order_details.result[i]["value"] + '</td>';
+            htmlContent+="</tr>"
+        }
+    }
+    htmlContent+="<tr class='table-warning' style='font-size:17px;outline: thin solid'>";
+    htmlContent+="<td colspan='3' style='text-align:center'>"+"Total Payment"+"</td>";
+    htmlContent+='<td>'+payment+ '</td>';
+    htmlContent+="</tr>"
+    htmlContent+="</tbody>";
+    htmlContent+="</table>";
+    const temp = await email.send(
+        recepient,
+        subject,
+        "",
+        htmlContent
+    );
+    next();
+    //console.log(temp)
+    //res.render('error',{code:"200",message:"Success."});
+    }
+   
+    //next();
+
 }

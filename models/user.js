@@ -258,7 +258,7 @@ class User {
             connectionError: _database.get(this).connectionError,
           };
           result.error ? (obj.error = true) : (obj.result = result.result);
-       console.log(result);
+       //console.log(result);
           resolve(obj);
         });
   }
@@ -277,12 +277,30 @@ class User {
         connectionError: _database.get(this).connectionError,
       };
       result.error ? (obj.error = true) : (obj.result = result.result);
-      console.log(result);
+      //console.log(result);
       resolve(obj);
     });
   }
 
+  async get_email_details(cartId){
+    var result= await _database
+      .get(this)
+      .select_query(
+        `select cartId,itemId,productName,photoLink,count(productId) as quantity,value from cart inner join cartAddition using(cartId) inner join item using(itemId) inner join itemDetail using(itemId) inner join product using(productId) where cartId=? and attributeId=4 group by productId;`,
+        [cartId]
+      );
+    return new Promise((resolve)=>{
+      let obj = {
+        connectionError: _database.get(this).connectionError,
+      };
+      result.error ? (obj.error = true) : (obj.result = result.result);
+      resolve(obj);
+    });
+  }
+
+
 }
+
 
 
 module.exports = User;

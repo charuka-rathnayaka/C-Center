@@ -126,11 +126,11 @@ class CustomerCart extends Cart{
         });
     }
 
-    async getCartAdditionsHistory(customerId){
-      var result= await _database
-        .get(this)
-        .select_query(
-          `select cartId,count(itemId) as "count",dateOfPurchase from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where customerId=? and state='close' group by cartId order by dateOfPurchase desc;`,
+  async getCartAdditionsHistory(customerId) {
+    var result = await _database
+      .get(this)
+      .select_query(
+        `select  pickupDate,delieveryEstimate,cart.cartId,count(itemId) as "count",dateOfPurchase from ${this.tableName} left outer join cart on(cart.cartId=customercart.cartId) inner join c_center_db.order on(cart.cartId=c_center_db.order.cartId) left outer join delieveryorder using(orderId) left outer join pickuporder using(orderId) inner join cartAddition on(cartAddition.cartId=cart.cartId) inner join item using(itemId) inner join product using(productId) where customerId=? and cart.state='close' group by cart.cartId order by dateOfPurchase desc;`,
           [customerId]
         );
       return new Promise((resolve)=>{
@@ -167,7 +167,7 @@ class GuestCart extends Cart{
         var result= await _database
           .get(this)
           .select_query(
-            `select itemId,productName,photoLink,cartId,count(itemId) as "count",dateOfAddition from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where guestId=? group by itemId order by dateOfAddition desc;`,
+            `select itemId,productName,photoLink,cartId,count(itemId) as "count",dateOfAddition from ${this.tableName} left outer join cart using(cartId) inner join cartAddition using(cartId) inner join item using(itemId) inner join product using(productId) where guestId=? and state='open' group by itemId order by dateOfAddition desc;`,
             [guestId]
           );
         return new Promise((resolve)=>{

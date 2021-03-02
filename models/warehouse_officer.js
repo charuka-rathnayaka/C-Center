@@ -124,7 +124,7 @@ class WarehouseOfficer {
               var result = await _database
                 .get(this)
                 .select_query(
-                  "SELECT `order`.`orderId`,`cart`.`cartId`,`order`.`delieveryMethod`,`cart`.`dateOfPurchase`,`order`.`state` FROM `order` NATURAL JOIN `cart` where `order`.`state`='open';"
+                  "SELECT `order`.`orderId`,`cart`.`cartId`,`order`.`delieveryMethod`,`cart`.`dateOfPurchase`,`order`.`state` FROM `order` left JOIN `cart` on `cart`.`cartId`=`order`.`cartId` where `order`.`state`='open';"
                   
                 );
              
@@ -156,7 +156,7 @@ class WarehouseOfficer {
               var result = await _database
                 .get(this)
                 .select_query(
-                  "SELECT `cart`.`cartId`,`order`.`state`,`order`.`orderId`,`order`.`delieveryMethod`,`product`.`productId`, `product`.`productName`,`item`.`itemId`,`cartaddition`.`dateOfAddition`,`itemdetail`.`value` as productSale FROM `order` NATURAL JOIN `cart` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 and `order`.`orderId`=?;",
+                  "SELECT `cart`.`cartId`,`order`.`state`,`order`.`orderId`,`order`.`delieveryMethod`,`product`.`productId`, `product`.`productName`,`item`.`itemId`,`cartaddition`.`dateOfAddition`,`itemdetail`.`value` as productSale FROM `order` left JOIN `cart` on `order`.`cartId`=`cart`.`cartId` RIGHT JOIN `cartaddition` ON `cart`.`cartId`=`cartaddition`.`cartId` LEFT JOIN `item` ON `cartaddition`.`itemId`=`item`.`itemId` NATURAL JOIN `product` LEFT JOIN `itemdetail` on `item`.`itemId`=`itemdetail`.`itemId` where `itemdetail`.`attributeId`=4 and `order`.`orderId`=?;",
                   [orderId]
                 );
              
@@ -206,7 +206,7 @@ class WarehouseOfficer {
               var result = await _database
                 .get(this)
                 .select_query(
-                  "SELECT `order`.`orderId`,`cart`.`cartId`,`order`.`delieveryMethod`,`cart`.`dateOfPurchase`,`order`.`state` FROM `order` NATURAL JOIN `cart` where `order`.`orderId`=?",
+                  "SELECT `order`.`orderId`,`cart`.`cartId`,`order`.`delieveryMethod`,`cart`.`dateOfPurchase`,`order`.`state` FROM `order` left JOIN `cart` on `order`.`cartId`=`cart`.`cartId` where `order`.`orderId`=?",
                   [orderId]
                   
                 );

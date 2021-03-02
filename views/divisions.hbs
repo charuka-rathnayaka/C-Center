@@ -51,13 +51,13 @@
             <div class="container">
                 <div class="row" id="productRows">
                     {{#each div_products}}
-                        <div class="col-lg-4 col-sm-6 mb-4">
-                            <div class="portfolio-item">
-                                <a class="portfolio-link" href="/info/{{this.id}}">
+                        <div class="col-lg-4 col-sm-6 mb-4" >
+                            <div class="portfolio-item" style="background-color:white;">
+                                <a class="portfolio-link" href="/info/{{this.id}}" style="width:340px;height:280px;display:flex;justify-content:center;background-color:white;">
                                     <div class="portfolio-hover">
                                         <div class="portfolio-hover-content"><i class="fa fa-cart-plus fa-4x"></i></div>
                                     </div>
-                                    <img class="img-flui" src="/product_images/{{this.image}}" alt="" width="340px" height="280px" />
+                                    <img class="img-flui" src="/product_images/{{this.image}}" style="max-width:100%;max-height:100%;" alt="" />
                                 </a>
                                 <div class="portfolio-caption">
                                     <div class="portfolio-caption-heading">{{this.name}}</div>
@@ -119,12 +119,12 @@
                         for(i=0; i<data.cat_products.length; i++){
                             document.getElementById('productRows').innerHTML += 
                             "<div class=\"col-lg-4 col-sm-6 mb-4\">"+
-                                "<div class=\"portfolio-item\">"+
-                                    "<a class=\"portfolio-link\" href=\"/info/"+data.cat_products[i].id+"\">"+
+                                "<div class=\"portfolio-item\" style=\"background-color:white;\">"+
+                                    "<a class=\"portfolio-link\" href=\"/info/"+data.cat_products[i].id+"\" style=\"width:340px;height:280px;display:flex;justify-content:center;background-color:white;\">"+
                                         "<div class=\"portfolio-hover\">"+
                                             "<div class=\"portfolio-hover-content\"><i class=\"fa fa-cart-plus fa-4x\"></i></div>"+
                                         "</div>"+
-                                        "<img class=\"img-flui\" src=\"/product_images/"+data.cat_products[i].image+"\" alt=\"\" width=\"340px\" height=\"280px\" />"+
+                                        "<img class=\"img-flui\" src=\"/product_images/"+data.cat_products[i].image+"\" style=\"max-width:100%;max-height:100%;\" alt=\"\" />"+
                                     "</a>"+
                                     "<div class=\"portfolio-caption\">"+
                                         "<div class=\"portfolio-caption-heading\">"+data.cat_products[i].name+"</div>"+
@@ -161,12 +161,12 @@
                         for(i=0; i<data.sub_cat_products.length; i++){
                             document.getElementById('productRows').innerHTML += 
                             "<div class=\"col-lg-4 col-sm-6 mb-4\">"+
-                                "<div class=\"portfolio-item\">"+
-                                    "<a class=\"portfolio-link\" href=\"/info/"+data.sub_cat_products[i].id+"\">"+
+                                "<div class=\"portfolio-item\" style=\"background-color:white;\">"+
+                                    "<a class=\"portfolio-link\" href=\"/info/"+data.sub_cat_products[i].id+"\" style=\"width:340px;height:280px;display:flex;justify-content:center;background-color:white;\">"+
                                         "<div class=\"portfolio-hover\">"+
                                             "<div class=\"portfolio-hover-content\"><i class=\"fa fa-cart-plus fa-4x\"></i></div>"+
                                         "</div>"+
-                                        "<img class=\"img-flui\" src=\"/product_images/"+data.sub_cat_products[i].image+"\" alt=\"\" width=\"340px\" height=\"280px\" />"+
+                                        "<img class=\"img-flui\" src=\"/product_images/"+data.sub_cat_products[i].image+"\" style=\"max-width:100%;max-height:100%;\" alt=\"\" height=\"280px\" />"+
                                     "</a>"+
                                     "<div class=\"portfolio-caption\">"+
                                         "<div class=\"portfolio-caption-heading\">"+data.sub_cat_products[i].name+"</div>"+

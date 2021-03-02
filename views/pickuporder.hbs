@@ -50,7 +50,17 @@
                                 Please enter your Contact name.
                             </div>
                         </div>
-
+                        <div class="col-md-5">
+                            <label for="validationCustom01" class="form-label">Email</label>
+                            <input type="text" class="form-control" id="validationCustom01" name='email_address' required
+                                value={{user_profile.email}}>
+                            <div class="valid-feedback">
+                                Looks good!
+                            </div>
+                            <div class="invalid-feedback">
+                                Please enter Email.
+                            </div>
+                        </div>
                         <div class="col-md-7">
                             <label for="validationCustom05" class="form-label">Contact number</label>
                             <input type="tel" class="form-control" id="validationCustom05" name='contactnumber'
@@ -63,25 +73,30 @@
 
 
                         <div class="col-md-7">
-                            <label for="validationCustom05" class="form-label">PickUp Date</label>
-                            <input type="date" class="form-control" id="validationCustom05" name='pickupdate' required
+                            <label for="validationCustom06" class="form-label">PickUp Date</label>
+                            <input type="date" class="form-control" id="validationCustom06" name='pickupdate'  required
                                 value={{user_profile.pickupdate}}>
+
                             <div class="invalid-feedback">
                                 Please provide valid Date.
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="validationCustom04" class="form-label">Payment Method</label>
+                                <select class="form-select" id="validationCustom04" name='payment' required
+                                    value={{user_profile.payment}}>
+                                    <option selected disabled value="">Choose...</option>
+                                    <option value='cashondelivery'>cash on delivery </option>
+                                    <option value='card'>card</option>
 
-                        <div class="col-md-3">
-                            <label for="validationCustom04" class="form-label">Payment Method</label>
-                            <select class="form-select" id="validationCustom04" name='payment' required
-                                value={{user_profile.payment}}>
-                                <option selected disabled value="">Choose...</option>
-                                <option value='cashondelivery'>cash on delivery </option>
-                                <option value='card'>card</option>
-
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select the Paymeny Method.
+                                </select>
+                                <div class="invalid-feedback">
+                                    Please select the Paymeny Method.
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                            <input type = "hidden" name="cartId" value={{cartId}} disable> 
                             </div>
                         </div>
                 </div>
@@ -113,7 +128,7 @@
     <div class="container mt-4">
         <div class="jumbotron">
             <h1 class="display-4">My Cart</h1>
-            <h2>{{totalcount}} products in the cart</h2>
+            <h2 id="totalHeader">{{totalcount}} products in the cart</h2>
             <table>
                 <tbody>
                     {{#each data}}
@@ -146,7 +161,7 @@
 
                                             <div class="cardlink">
                                                 <button class="btn"
-                                                    onclick="remove('{{this.cartId}}','{{this.itemId}}','{{this.productName}}')">Remove</button>
+                                                    onclick="remove('{{this.cartId}}','{{this.itemId}}','{{this.productName}}')"><front style="color: blue;"><u>Remove</u></front></button>
                                             </div>
                                             <div class="qntity">
                                                 <form id="myform" action="">
@@ -215,6 +230,7 @@
                     $('#totalcount').html(("Items(").concat(data.totalcount).concat(")"));
                     $('#subtotal').html(("LKR.").concat(data.subtotal));
                     $('#subtotala').html(("LKR.").concat(data.subtotal));
+                    $('#totalHeader').html(("").concat(data.totalcount).concat(" products in the cart"));
                 }
                 else {
                     window.location.href = '/mycart';
@@ -247,6 +263,7 @@
                     $('#totalcount').html(("Items(").concat(data.totalcount).concat(")"));
                     $('#subtotal').html(("LKR.").concat(data.subtotal));
                     $('#subtotala').html(("LKR.").concat(data.subtotal));
+                     $('#totalHeader').html(("").concat(data.totalcount).concat(" products in the cart"));
                 }
                 else {
                     window.location.href = '/mycart';
@@ -257,4 +274,21 @@
         //console.log(data);
         //document.getElementById("myform").submit();
     }
+    $(function () {
+            var dtToday = new Date();
+
+            var month = dtToday.getMonth() + 1;
+            var day = dtToday.getDate();
+            var year = dtToday.getFullYear();
+            if (month < 10)
+                month = '0' + month.toString();
+            if (day < 10)
+                day = '0' + day.toString();
+
+            var maxDate = year + '-' + month + '-' + day;
+            
+            $('#validationCustom06').attr('min', maxDate);
+        });
+        
+
 </script>

@@ -39,6 +39,17 @@
                             Please enter your Contact name.
                         </div>
                     </div>
+                    <div class="col-md-5">
+                        <label for="validationCustom01" class="form-label">Email</label>
+                        <input type="text" class="form-control" id="validationCustom01" name='email_address' required
+                            value={{user_profile.email}}>
+                        <div class="valid-feedback">
+                            Looks good!
+                        </div>
+                        <div class="invalid-feedback">
+                            Please enter Email.
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <label for="validationCustom03" class="form-label">Address</label>
                         <input type="text" class="form-control" id="validationCustom03" name='address' required
@@ -49,12 +60,12 @@
                     </div>
                     <div class="col-md-3">
                         <label for="validationCustom04" class="form-label">State</label>
-                        <select class="form-select" id="validationCustom04" name='city' required
-                            value={{user_profile.city}}>
-                            <option selected disabled value="">Choose...</option>
-                            <option value='Galle'>Galle</option>
-                            <option value='Matara'>Matara</option>
-                            <option value='Colombo'>Colombo</option>
+                        <select class="form-select" id="city" name='city' required>
+                            <option selected disabled value="">City...</option>
+                            {{#each cities}}
+                            <option value={{{this.cityName}}}>{{this.cityName}}</option>
+                            {{/each}}
+                        
                         </select>
                         <div class="invalid-feedback">
                             Please select the closest city.
@@ -69,17 +80,22 @@
                             Please provide your Contact number.
                         </div>
                     </div>
-                    <div class="col-md-3">
-                        <label for="validationCustom04" class="form-label">Payment Method</label>
-                        <select class="form-select" id="validationCustom04" name='payment' required
-                            value={{user_profile.payment}}>
-                            <option selected disabled value="">Choose...</option>
-                            <option value='cashondelivery'>cash on delivery </option>
-                            <option value='card'>card</option>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="validationCustom04" class="form-label">Payment Method</label>
+                            <select class="form-select" id="validationCustom04" name='payment' required
+                                value={{user_profile.payment}}>
+                                <option selected disabled value="">Choose...</option>
+                                <option value='cashondelivery'>cash on delivery </option>
+                                <option value='card'>card</option>
 
-                        </select>
-                        <div class="invalid-feedback">
-                            Please select the Paymeny Method.
+                            </select>
+                            <div class="invalid-feedback">
+                                Please select the Paymeny Method.
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <input type = "hidden" name="cartId" value={{cartId}} disable> 
                         </div>
                     </div>
                     <div class="cardcheckout">
@@ -110,7 +126,7 @@
     <div class="container mt-4">
         <div class="jumbotron">
             <h1 class="display-4">My Cart</h1>
-            <h2>{{totalcount}} products in the cart</h2>
+            <h2 id="totalHeader">{{totalcount}} products in the cart</h2>
             <table>
                 <tbody>
                     {{#each data}}
@@ -143,7 +159,7 @@
 
                                             <div class="cardlink">
                                                 <button class="btn"
-                                                    onclick="remove('{{this.cartId}}','{{this.itemId}}','{{this.productName}}')">Remove</button>
+                                                    onclick="remove('{{this.cartId}}','{{this.itemId}}','{{this.productName}}')"><front style="color: blue;"><u>Remove</u></front></button>
                                             </div>
                                             <div class="qntity">
                                                 <form id="myform" action="">
@@ -184,6 +200,7 @@
 </body>
 
 </html>
+
 <script>
     function update(value, price, cartId, itemId) {
         $.ajax({
@@ -206,6 +223,7 @@
                     $('#totalcount').html(("Items(").concat(data.totalcount).concat(")"));
                     $('#subtotal').html(("LKR.").concat(data.subtotal));
                     $('#subtotala').html(("LKR.").concat(data.subtotal));
+                    $('#totalHeader').html(("").concat(data.totalcount).concat(" products in the cart"));
                 }
                 else {
                     window.location.href = '/mycart';
@@ -238,6 +256,7 @@
                     $('#totalcount').html(("Items(").concat(data.totalcount).concat(")"));
                     $('#subtotal').html(("LKR.").concat(data.subtotal));
                     $('#subtotala').html(("LKR.").concat(data.subtotal));
+                     $('#totalHeader').html(("").concat(data.totalcount).concat(" products in the cart"));
                 }
                 else {
                     window.location.href = '/mycart';
@@ -248,4 +267,5 @@
         //console.log(data);
         //document.getElementById("myform").submit();
     }
+   
 </script>

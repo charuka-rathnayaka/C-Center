@@ -94,7 +94,13 @@ exports.add_new_item=async(req,res)=>{
         res.render('error',{code:"500",message:"Server is temporary down"});
         return;
     }
+    else if(order_details.error==true){
+        console.log("Database error");
+        res.render('error',{code:"500",message:"UnExpected Error. Server is temporary down"});
+        return;
+    }
     else {
+        console.log(order_details);
         res.locals.state=(order_details.result[0]["state"]); 
         res.locals.order_details=(order_details.result); 
         res.locals.cartId=(order_details.result[0]["cartId"]);

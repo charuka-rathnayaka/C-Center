@@ -43,7 +43,7 @@ class Database {
         .get(this)
         .query(query_name, values, (error, results, fields) => {
           resolve(_getResults.get(this)(error, results));
-         console.log(error);
+         //console.log(error);
         });
     });
   
@@ -57,7 +57,7 @@ class Database {
             .get(this)
             .query(`CALL ??(?)`, [name, args], (error, results, fields) => {
               resolve(_getResults.get(this)(error, results));
-            //  console.log(error);
+            // console.log(error);
             });
         });
       }
